@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="#">
+                Photogrammatron
+              </a>
+            </div>
+          </div>
+        </nav>
+        <div class="container-fluid">
+            <div id="photogrammatron" class="row">
+                <div id="left-panel" class="col-xs-3 well">
+                    <h3>Select File</h3>
+                    <form>
+                        <div class="form-group">
+                            <input type="file" class="btn btn-default form-control" name="image-upload">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="link to onlineimage" name="image-link" />
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-default" name="random-image">Random Image</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="jumbotron col-xs-6">
+                    <canvas id="image-workspace"></canvas>
+                </div>
+                <div id="right-panel" class="col-xs-3 well">
+                    right panel
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

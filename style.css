@@ -1,0 +1,11 @@
+html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
+    height: 100%;
+}
+
+#image-workspace {
+    border: 1px solid black;
+}
+
+.navbar {
+    margin-bottom: 0px;
+}
