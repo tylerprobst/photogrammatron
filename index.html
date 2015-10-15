@@ -11,6 +11,7 @@
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="style.css">
+        <script type="text/javascript" src="main.js"></script>
     </head>
     <body>
         <nav class="navbar navbar-inverse">
@@ -26,12 +27,12 @@
             <div id="photogrammatron" class="row">
                 <div id="left-panel" class="col-xs-3 well">
                     <h3>Select File</h3>
-                    <form>
+                    <form id="add-image">
                         <div class="form-group">
-                            <input type="file" class="btn btn-default form-control" name="image-upload">
+                            <input type="file" class="btn btn-default form-control" id="image-upload" name="image-upload">
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="link to onlineimage" name="image-link" />
+                            <input type="text" class="form-control" placeholder="link to online image" name="image-link" />
                         </div>
                         <div class="form-group">
                             <button class="btn btn-default" name="random-image">Random Image</button>
@@ -39,7 +40,7 @@
                     </form>
                 </div>
                 <div class="jumbotron col-xs-6">
-                    <canvas id="image-workspace"></canvas>
+                    <canvas id="image-workspace" height="400px" width="500px"></canvas>
                 </div>
                 <div id="right-panel" class="col-xs-3 well">
                     right panel
