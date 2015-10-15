@@ -5,11 +5,11 @@ $(document).ready(function(){
 		// var	imgUpload = document.getElementById('image-upload');
 		var img = new Image;
     	img.src = URL.createObjectURL(event.target.files[0]);
-    	// canvas.height = img.height
-    	// canvas.width = img.width
 
     	img.onload = function() {
-    		context.drawImage(img, 0, 0, canvas.width, canvas.height);	
+    		canvas.height = this.height
+    		canvas.width = this.width
+    		context.drawImage(img, 0, 0, img.width, img.height);	
     	}
 		
 	});
