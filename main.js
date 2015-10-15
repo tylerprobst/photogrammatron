@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$('form#add-image').on('change', '#image-upload', function() {
+	$('input#image-upload').on('change', function() {
 		var canvas    = document.getElementById('image-workspace'),
 			context   = canvas.getContext('2d'),
 		    img 	  = new Image;
