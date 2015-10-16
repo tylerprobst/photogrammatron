@@ -78,4 +78,4 @@ listen for click event. create div. position on page/picture LOOK AT ISSUES NOTE
 
 - css class border for rectangle. mouse down or up, locations, h and w.
 
-
+#MAKE IT CROP!!!!!!!!!!!!!!
