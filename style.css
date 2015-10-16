@@ -9,3 +9,9 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
 .navbar {
     margin-bottom: 0px;
 }
+
+#selection {
+	position: absolute;
+	border: 1px dashed #000;
+}
+
