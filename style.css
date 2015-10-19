@@ -2,8 +2,19 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
     height: 100%;
 }
 
+
+#image {
+	max-height: 100%;
+	max-width: 100%;
+}
+
 #image-workspace {
     border: 1px solid black;
+    height: 400px;
+    width: 650px;
+    max-height: 400px;
+    max-width: 650px;
+    overflow: hidden;
 }
 
 .navbar {
