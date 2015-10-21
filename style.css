@@ -2,10 +2,15 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
     height: 100%;
 }
 
+#image {
+	max-height: 100%;
+	max-width : 100%;
+}
+
 #image-workspace {
-    border: 1px solid black;
-    height: 800px;
-    width: 650px;
+    border	: 1px solid black;
+    height	: 800px;
+    width 	: 650px;
     overflow: hidden;
 }
 
@@ -19,8 +24,5 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
 
 #selection {
 	position: absolute;
-	border: 1px dashed #000;
+	border  : 1px dashed #000;
 }
-
-
-

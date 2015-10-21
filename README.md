@@ -39,22 +39,21 @@ PHASE 1 MVP (Minimum Viable Product):
 Features:
 - link upload (onto canvas display)
 
-***- crop
-- save
+- crop
+- save (tyler)
 
 UI:
-***- rectangular selection
+- rectangular selection
 
 
 PHASE 2:
 
 Features:
-- rotate
-- resize
+- rotate 
 
 UI:
-- zoom
-- circular selector
+- zoom and navigate around (tyler make crop work with this)
+- circular selector 
 - text
 
 
@@ -78,4 +77,5 @@ listen for click event. create div. position on page/picture LOOK AT ISSUES NOTE
 
 - css class border for rectangle. mouse down or up, locations, h and w.
 
-#MAKE IT CROP!!!!!!!!!!!!!!
+****MAKE IT CROP!!!!!!!!!!!!!!
+- - maybe look at resize. ? not important.
