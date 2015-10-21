@@ -4,6 +4,13 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
 
 #image-workspace {
     border: 1px solid black;
+    height: 800px;
+    width: 650px;
+    overflow: hidden;
+}
+
+#image-wrapper {
+	position: relative;
 }
 
 .navbar {
@@ -14,4 +21,6 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
 	position: absolute;
 	border: 1px dashed #000;
 }
+
+
 

@@ -40,11 +40,20 @@
                     </form>
                 </div>
                 <div class="jumbotron col-xs-6">
-                    <canvas id="image-workspace" height="400px" width="500px">
-                    </canvas>
+                    <div id="image-workspace">
+                        <div id="image-wrapper">
+                            <img id="image">
+                        </div>
+                    </div>
                 </div>
                 <div id="right-panel" class="col-xs-3 well">
-                    <button class="btn btn-default" name="crop-image=">Crop</button>
+                    <button class="btn btn-default" id="crop-image">Crop</button>
+                    <input id="filename" type="text" />
+                    <a class="btn btn-default" id="save" name="save" download="download.png">Save</a>
+                    <p><button class="btn btn-danger" id="rectangular-selector" value="OFF">Rectangular Select</button></p>
+                    <p><button class="btn btn-danger" id="zoom-in" value="OFF">Zoom In</button>
+                    <button class="btn btn-danger" id="zoom-out" value="OFF">Zoom Out</button>
+                    <button class="btn btn-danger" id="nav" value="OFF">Nav</button></p>
                 </div>
             </div>
         </div>
