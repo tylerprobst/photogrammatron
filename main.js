@@ -1,5 +1,5 @@
-//hw: save, make the canvas mirror the image then save the canvas to a file
-//HW: ZOOM in/out(touchpad or button) and navigate(see issues on github) track the scale in a float variable
+//hw: make crop work relative to how far you're zoomed in or out
+//hw: make nav work again 
 
 
 $(document).ready(function(){
@@ -33,21 +33,23 @@ $(document).ready(function(){
 			document.getElementById('rectangular-selector').className = 'btn btn-danger';
 		}
 		if($this.val() === 'ON') {
-		    $('div#image-workspace').on('mousedown', function (event) {
-		        var startTop = event.pageY,
+		    $('div#image-wrapper').on('mousedown', function (event) {
+		        var startTop  = event.pageY,
 		            startLeft = event.pageX,
-		            $box = $('<div id="selection"></div>');
+		            $box      = $('<div id="selection"></div>'),
+		            $wrapper  = $('div#image-wrapper'),
+		            offset    = $wrapper.offset(); 
 
 		        $('#selection').remove();
-		        $('body').append($box);
+		        $('div#image-wrapper').append($box);
 
 		        $(window).on('mousemove', function (event) {
-		            var top = startTop,
-		                left = startLeft,
+		            var top    = startTop,
+		                left   = startLeft,
 		                bottom = event.pageY,
-		                right = event.pageX,
+		                right  = event.pageX,
 		                height = Math.abs(bottom - top),
-		                width = Math.abs(right - left);
+		                width  = Math.abs(right - left);
 
 		            event.preventDefault();
 
@@ -55,22 +57,18 @@ $(document).ready(function(){
 		            if (right < left) left = right;
 
 		            $box.css({
-		                top: top + 'px',
-		                left: left + 'px',
+		                top: (top - offset.top) + 'px',
+		                left: (left -offset.left) + 'px',
 		                height: height + 'px',
 		                width: width + 'px'
 		            })
 
 		        });
 
-		        $(window).one('mouseup', function (event){ //one instead of on to stop the possibility of MANY mouseup listeners
+		        $(window).one('mouseup', function (event){ //.one instead of .on , to stop the possibility of MANY mouseup listeners
 		            $(window).off('mousemove');
 		        });
 	   		 });
-		}
-
-		else {
-			$('div#image-workspace').off('mousedown');
 		}
 	});
  
@@ -200,6 +198,7 @@ $(document).ready(function(){
 		}
 
 	});
+	
 
 	function changeCanvasCallback (canvas, context) {
 		var href = canvas.toDataURL('image/png');
