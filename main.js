@@ -1,24 +1,32 @@
-//hw: make crop work relative to how far you're zoomed in or out
-//hw: make nav work again 
-
+//hw: look into flask S3 module
+//hw: make reusable function for determining which toggle buttons are turned on and when a new one is turned on turn off the others.
 
 $(document).ready(function(){
 	var canvas      = document.createElement('canvas'),
-
 		context     = canvas.getContext('2d'),
 		img         = $('img#image')[0],
-		$imgWrapper = $('div#image-workspace');
+		imgWrapper  = $('div#image-wrapper')[0],
+		imgScale, 
+		initHeight;
 
 	//input, draw to canvas
 	$('input#image-upload').on('change', function (event) {
     	
     	img.src = URL.createObjectURL(event.target.files[0]);
+    	
+    	img.removeAttribute('height');
+    	img.removeAttribute('width');
+    	imgScale = 1.00;
+
 
     	img.onload = function() {
+    		initHeight = this.height;
 			canvas.height = this.height;
 			canvas.width = this.width;
-			context.drawImage(img, 0, 0, img.width, img.height);
+			context.drawImage(img, 0, 0, this.width, this.height);
 			changeCanvasCallback(canvas, context);
+			this.height = this.height * imgScale;
+			this.width = this.width * imgScale;
     	};
 	});
 	//rectangular selector
@@ -59,17 +67,20 @@ $(document).ready(function(){
 
 		            $box.css({
 		                top: (top - offset.top) + 'px',
-		                left: (left -offset.left) + 'px',
+		                left: (left - offset.left) + 'px',
 		                height: height + 'px',
 		                width: width + 'px'
 		            })
 
 		        });
 
-		        $(window).one('mouseup', function (event){ //.one instead of .on , to stop the possibility of MANY mouseup listeners
+		        $(window).one('mouseup', function (event) { 
 		            $(window).off('mousemove');
 		        });
 	   		 });
+		}
+		else {
+			$('div#image-wrapper').off('mousedown');
 		}
 	});
  
@@ -87,23 +98,19 @@ $(document).ready(function(){
 
 		if ($this.val() === 'ON') {
 			$('img#image').on('click', function (event) {	
-				var ratio  = img.height/img.width,
-					resize = 1.1,
-					mouseX = event.pageX,
-					mouseY = event.pageY,
-					newH   = img.height * resize,
-					newW   = img.width * resize,
-					imgDiv = img.parentNode;
+				var resize   = 1.1,
+					mouseX   = event.pageX,
+					mouseY   = event.pageY,
+					newH     = img.height * resize,
+					newW     = img.width * resize,
+					imgDiv   = img.parentNode;
+
+				imgScale = newH/initHeight;
 
 				event.preventDefault();
 
-				img.style.height = newH + 'px';
-				img.style.width = newW + 'px';
-				
-				console.log(mouseX, mouseY);
-
-				imgDiv.scrollLeft = (mouseX * resize) - (newW/2)/2;
-				imgDiv.scrollTop  = (mouseY * resize) - (newH/2)/2;
+				img.height = newH;
+				img.width = newW;
 			});
 		}
 
@@ -126,8 +133,7 @@ $(document).ready(function(){
 
 		if ($this.val() === 'ON') {
 			$('img#image').on('click', function (event) {	
-				var ratio  = img.height/img.width,
-					resize = 0.9,
+				var resize = 0.9,
 					mouseX = event.pageX,
 					mouseY = event.pageY,
 					newH   = img.height * resize,
@@ -136,13 +142,15 @@ $(document).ready(function(){
 
 				event.preventDefault();
 
-				img.style.height = newH + 'px';
-				img.style.width = newW + 'px';
+				imgScale = newH/initHeight;
+
+				img.height = newH;
+				img.width = newW;
 				
 				//use jquery to get the workspace, use offset to get top and left and get height and width then depending on where you
 				//click to zoom in or out use that info to recenter the image.
-				imgDiv.scrollLeft = (mouseX * resize) - (newW/2)/2;
-				imgDiv.scrollTop  = (mouseY * resize) - (newH/2)/2;
+				// imgDiv.scrollLeft = (mouseX * resize) - (newW/2)/2;
+				// imgDiv.scrollTop  = (mouseY * resize) - (newH/2)/2;
 			});
 		}
 
@@ -166,11 +174,11 @@ $(document).ready(function(){
 		}
 
 		if ($this.val() === 'ON'){
-			$('img#image').on('mousedown', function (event) {
+			$('div#image-wrapper').on('mousedown', function (event) {
 				var startX  = event.pageX,
 					startY  = event.pageY;
-					imgLeft = img.offsetLeft,
-					imgTop  = img.offsetTop;
+					imgLeft = imgWrapper.offsetLeft,
+					imgTop  = imgWrapper.offsetTop;
 
 				event.preventDefault();
 
@@ -182,9 +190,8 @@ $(document).ready(function(){
 
 					event.preventDefault();
 						
-					img.style.position = 'absolute';
-					img.style.top = imgTop + offsetY + 'px';
-					img.style.left = imgLeft + offsetX + 'px';
+					imgWrapper.style.top = imgTop + offsetY + 'px';
+					imgWrapper.style.left = imgLeft + offsetX + 'px';
 
 				});
 
@@ -195,7 +202,7 @@ $(document).ready(function(){
 		}
 
 		else {
-			$('img#image').off('mousedown');
+			$('div#image-wrapper').off('mousedown');
 		}
 
 	});
@@ -207,71 +214,23 @@ $(document).ready(function(){
 		// set listener on filename for change and set download property on a tag to change filename
 	}
 
-    //rectangular selector
-    $('div#image-wrapper').on('mousedown', function (event) {
-        var startTop  = event.pageY,
-            startLeft = event.pageX,
-            $box      = $('<div id="selection"></div>'),
-            $wrapper  = $('#image-wrapper'),
-            offset    = $wrapper.offset();
-
-        $('#selection').remove();
-        $('#image-wrapper').append($box);
-
-        $(window).on('mousemove', function (event) {
-            var top    = startTop,
-                left   = startLeft,
-                bottom = event.pageY,
-                right  = event.pageX,
-                height = Math.abs(bottom - top),
-                width  = Math.abs(right - left);
-
-            event.preventDefault();
-
-            if (bottom < top) top = bottom;
-            if (right < left) left = right;
-
-            $box.css({
-                top   : (top - offset.top) + 'px',
-                left  : (left - offset.left) + 'px',
-                height: height + 'px',
-                width : width + 'px'
-            })
-
-            console.log(top, left, height, width);
-        });
-
-        $(window).one('mouseup', function (event){ //one instead of on to stop the possibility of MANY mouseup listeners
-            $(window).off('mousemove');
-        });
-    });
-
-    //image crop
-    //find selector, find 
     $('button[name="crop-image"]').on('click', function (event) { //on clicking the crop button
         var $selection = $('#selection'),
             position   = $selection.position(),
-            height     = $selection.height(),
-            width      = $selection.width(),
-            imgData    = context.getImageData(position.left, position.top, width, height);
+            height     = $selection.height()/imgScale,
+            width      = $selection.width()/imgScale,
+            imgData    = context.getImageData(position.left/imgScale, position.top/imgScale, width, height);
 
         canvas.height = height;
         canvas.width  = width;
+        img.height    = height;
+        img.width	  = width;
 
-        context.putImageData(imgData, 0, 0)
+        context.putImageData(imgData, 0, 0);
 
         img.src = canvas.toDataURL();
-        selection.remove()
-    })
+        imgWrapper.style.top = 0 + 'px';
+        imgWrapper.style.left = 0 + 'px';
+        $selection.remove();
+    });
 });
-
-//to DataURL method to pull the box out. that will give you the url to put into the image.
-
-//find the box with jQuery... Top and left are not going to be relative right now to the image workspace
-//offSet on image workspace, subtract to find box.
-
-//we do need a common function that will take the new data for the image, and then a callback.
-
-//get EMILYSLIST working!!!!!!!!!!!!
-
-//Amazon S3.
