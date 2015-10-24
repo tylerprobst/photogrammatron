@@ -12,6 +12,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="style.css">
         <script type="text/javascript" src="main.js"></script>
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     </head>
     <body>
         <nav class="navbar navbar-inverse">
@@ -47,13 +48,15 @@
                     </div>
                 </div>
                 <div id="right-panel" class="col-xs-3 well">
-                    <button class="btn btn-default" name="crop-image">Crop</button>
-                    <input id="filename" type="text" />
-                    <a class="btn btn-default" id="save" name="save" download="download.png">Save</a>
+                    <input id="filename" type="text" placeholder="save file as..." />
+                    <a class="btn btn-default" id="save" name="save" download="download.png"><span class="glyphicon glyphicon-download-alt"></span></a>
                     <p><button class="btn btn-danger" id="rectangular-selector" value="OFF">Rectangular Select</button></p>
-                    <p><button class="btn btn-danger" id="zoom-in" value="OFF">Zoom In</button>
-                    <button class="btn btn-danger" id="zoom-out" value="OFF">Zoom Out</button>
-                    <button class="btn btn-danger" id="nav" value="OFF">Nav</button></p>
+                    <p><button class="btn btn-default" name="crop-image"><i class="fa fa-crop"></i></button></p>
+                    <p><button class="btn btn-default" id="clockwise"><i class="fa fa-rotate-right"></i></button></p>
+                    <p><button class="btn btn-default" id="counter-clockwise"><i class="fa fa-rotate-left"></i></button></p>
+                    <p><button class="btn btn-danger" id="zoom-in" value="OFF"><span class="glyphicon glyphicon-zoom-in"></span></button></p>
+                    <p><button class="btn btn-danger" id="zoom-out" value="OFF"><span class="glyphicon glyphicon-zoom-out"></span></button></p>
+                    <p><button class="btn btn-danger" id="nav" value="OFF"><span class="glyphicon glyphicon-move"></span></button></p>
                 </div>
             </div>
         </div>
