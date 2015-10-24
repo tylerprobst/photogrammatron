@@ -38,7 +38,7 @@ $(document).ready(function(){
 	//rectangular selector
 	$('button#rectangular-selector').on('click', function (event) {    
 		var $this = $(this);
-		buttonController($this);
+		$this.buttonController();
 
 		if($this.val() === 'ON') {
 		    $('div#image-wrapper').on('mousedown', function (event) {
@@ -85,7 +85,7 @@ $(document).ready(function(){
     //zoom in
 	$('button#zoom-in').on('click', function (event) {
 		var $this = $(this);
-		buttonController($this);
+		$this.buttonController();
 
 
 		if ($this.val() === 'ON') {
@@ -113,7 +113,7 @@ $(document).ready(function(){
     //zoom out
 	$('button#zoom-out').on('click', function (event) {
 		var $this = $(this);
-		buttonController($this);
+		$this.buttonController();
 
 
 		if ($this.val() === 'ON') {
@@ -147,7 +147,7 @@ $(document).ready(function(){
 	//nav around image 
 	$('button#nav').on('click', function (event) {
 		var $this = $(this);
-		buttonController($this);
+		$this.buttonController();
 
 		if ($this.val() === 'ON'){
 			$('div#image-wrapper').on('mousedown', function (event) {
@@ -245,13 +245,13 @@ $(document).ready(function(){
 		// set listener on filename for change and set download property on a tag to change filename
 	}
 
-	function buttonController (current) {
+	$.fn.buttonController = function () {
 		var $rectSelect = $('button#rectangular-selector'),
 			$zoomIn     = $('button#zoom-in'),
 			$zoomOut    = $('button#zoom-out'),
 			$nav        = $('button#nav');
 
-		if (current.val() === 'OFF') {
+		if (this.val() === 'OFF') {
 			
 			$rectSelect.val('OFF');
 			$rectSelect.removeClass('btn btn-success').addClass('btn btn-danger');
@@ -269,12 +269,12 @@ $(document).ready(function(){
 			$nav.removeClass('btn btn-success').addClass('btn btn-danger');
 			$('div#image-wrapper').off('mousedown');
 
-			current.val('ON');
-			current.removeClass('btn btn-danger').addClass('btn btn-success');
+			this.val('ON');
+			this.removeClass('btn btn-danger').addClass('btn btn-success');
 		}
 		else {
-			current.val('OFF');
-			current.removeClass('btn btn-success').addClass('btn btn-danger');
+			this.val('OFF');
+			this.removeClass('btn btn-success').addClass('btn btn-danger');
 		}
 
 	}
