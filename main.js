@@ -14,6 +14,7 @@ $(document).ready(function(){
     	
     	img.removeAttribute('height');
     	img.removeAttribute('width');
+    	
     	imgScale = 1.00;
 
     	img.onload = function() {
@@ -29,6 +30,7 @@ $(document).ready(function(){
 
         function updateImage () {
             changeCanvasCallback(canvas, context);
+            console.log(imgScale);
             this.height = canvas.height * imgScale;
             this.width  = canvas.width * imgScale;
         }
@@ -36,15 +38,8 @@ $(document).ready(function(){
 	//rectangular selector
 	$('button#rectangular-selector').on('click', function (event) {    
 		var $this = $(this);
-		
-		if($this.val() === 'OFF') {
-			$this.val('ON');
-			document.getElementById('rectangular-selector').className = 'btn btn-success';
-		}
-		else {
-			$this.val('OFF');
-			document.getElementById('rectangular-selector').className = 'btn btn-danger';
-		}
+		$this.buttonController();
+
 		if($this.val() === 'ON') {
 		    $('div#image-wrapper').on('mousedown', function (event) {
 		        var startTop  = event.pageY,
@@ -90,15 +85,8 @@ $(document).ready(function(){
     //zoom in
 	$('button#zoom-in').on('click', function (event) {
 		var $this = $(this);
-		
-		if($this.val() === 'OFF') {
-			$this.val('ON');
-			document.getElementById('zoom-in').className = 'btn btn-success';
-		}
-		else {
-			$this.val('OFF');
-			document.getElementById('zoom-in').className = 'btn btn-danger';
-		}
+		$this.buttonController();
+
 
 		if ($this.val() === 'ON') {
 			$('img#image').on('click', function (event) {	
@@ -110,7 +98,7 @@ $(document).ready(function(){
 					imgDiv   = img.parentNode;
 
 				imgScale = newH/initHeight;
-
+				console.log(imgScale);
 				event.preventDefault();
 
 				img.height = newH;
@@ -125,15 +113,8 @@ $(document).ready(function(){
     //zoom out
 	$('button#zoom-out').on('click', function (event) {
 		var $this = $(this);
-		
-		if($this.val() === 'OFF') {
-			$this.val('ON');
-			document.getElementById('zoom-out').className = 'btn btn-success';
-		}
-		else {
-			$this.val('OFF');
-			document.getElementById('zoom-out').className = 'btn btn-danger';
-		};
+		$this.buttonController();
+
 
 		if ($this.val() === 'ON') {
 			$('img#image').on('click', function (event) {	
@@ -153,6 +134,8 @@ $(document).ready(function(){
 				
 				//use jquery to get the workspace, use offset to get top and left and get height and width then depending on where you
 				//click to zoom in or out use that info to recenter the image.
+				// imgDiv.scrollLeft = (mouseX * resize) - (newW/2)/2;
+				// imgDiv.scrollTop  = (mouseY * resize) - (newH/2)/2;
 			});
 		}
 
@@ -164,16 +147,7 @@ $(document).ready(function(){
 	//nav around image 
 	$('button#nav').on('click', function (event) {
 		var $this = $(this);
-		
-		if ($this.val() === 'OFF'){
-			$this.val('ON');
-			document.getElementById('nav').className = 'btn btn-success';
-		}
-
-		else {
-			$this.val('OFF');
-			document.getElementById('nav').className = 'btn btn-danger';
-		}
+		$this.buttonController();
 
 		if ($this.val() === 'ON'){
 			$('div#image-wrapper').on('mousedown', function (event) {
@@ -208,21 +182,7 @@ $(document).ready(function(){
 		}
 
 	});
-
-	
-	function changeCanvasCallback (canvas, context) {
-		var href = canvas.toDataURL('image/png');
-		$('a#save').prop('href', href);
-		// set listener on filename for change and set download property on a tag to change filename
-	}
-
-    // circular selector
-    /*$('div#image-wrapper').on('mousedown', function (event){
-
-    })*/
-
-    //image crop
-    $('button[name="crop-image"]').on('click', function (event) { //on clicking the crop button
+    $('button[name="crop-image"]').on('click', function (event) {
         var $selection = $('#selection'),
             position   = $selection.position(),
             height     = $selection.height()/imgScale,
@@ -231,8 +191,7 @@ $(document).ready(function(){
 
         canvas.height = height;
         canvas.width  = width;
-        img.height    = height;
-        img.width	  = width;
+        initHeight    = height;
 
         context.putImageData(imgData, 0, 0);
 
@@ -240,41 +199,85 @@ $(document).ready(function(){
         imgWrapper.style.top = 0 + 'px';
         imgWrapper.style.left = 0 + 'px';
         $selection.remove();
-    })
+    });
 
-    //image rotation clockwise (can we put an image in there the circle rotating arrow thing)
     $('button#clockwise').on('click', function (event) {
-        var angleInDegrees = 0;
+    	var angleInDegrees = 0;
 
-        angleInDegrees = (angleInDegrees + 90) % 360;
-        drawRotated(angleInDegrees);
-    })
+    	angleInDegrees = (angleInDegrees + 90) % 360;
+    	drawRotated(angleInDegrees);
+    });
 
     $('button#counter-clockwise').on('click', function (event) {
-        var angleInDegrees = 0;
+    	var angleInDegrees = 0;
 
-        angleInDegrees = (angleInDegrees - 90) % 360;
-        drawRotated(angleInDegrees);
-    })
+    	angleInDegrees = (angleInDegrees - 90) % 360;
+    	drawRotated(angleInDegrees);
+    });
 
     function drawRotated (degrees) {
-        var temp = canvas.width;
+    	var	temp = canvas.width;
 
-        canvas.width = canvas.height;
-        canvas.height = temp;
+    	context.save(); 
 
-        if (degrees > 0) {
-            context.translate(canvas.width, 0);
-        }
-        else {
-            context.translate(0, canvas.height);
-        }
-        context.rotate(degrees*Math.PI/180);
-        context.drawImage(img, 0, 0);
-        img.src = canvas.toDataURL();
-        img.height = canvas.height * imgScale;
-        img.width = canvas.width * imgScale;
+    	canvas.width = canvas.height;
+    	canvas.height = temp;
+    	
+    	if (degrees > 0) {
+    	 context.translate(canvas.width, 0);
+    	}
+    	
+    	else {
+    	context.translate(0, canvas.height);
+    	}
+
+    	context.rotate(degrees * Math.PI/180);
+    	context.drawImage(img, 0, 0);
+    	context.restore();
+    	img.src = canvas.toDataURL();
+
+    	
     }
+
+    function changeCanvasCallback (canvas, context) {
+		var href = canvas.toDataURL('image/png');
+		$('a#save').prop('href', href);
+		// set listener on filename for change and set download property on a tag to change filename
+	}
+
+	$.fn.buttonController = function () {
+		var $rectSelect = $('button#rectangular-selector'),
+			$zoomIn     = $('button#zoom-in'),
+			$zoomOut    = $('button#zoom-out'),
+			$nav        = $('button#nav');
+
+		if (this.val() === 'OFF') {
+			
+			$rectSelect.val('OFF');
+			$rectSelect.removeClass('btn btn-success').addClass('btn btn-danger');
+			$('div#image-wrapper').off('mousedown');
+
+			$zoomIn.val('OFF');
+			$zoomIn.removeClass('btn btn-success').addClass('btn btn-danger');
+			$('img#image').off('click');
+
+			$zoomOut.val('OFF');
+			$zoomOut.removeClass('btn btn-success').addClass('btn btn-danger');
+			$('img#image').off('click');
+
+			$nav.val('OFF');
+			$nav.removeClass('btn btn-success').addClass('btn btn-danger');
+			$('div#image-wrapper').off('mousedown');
+
+			this.val('ON');
+			this.removeClass('btn btn-danger').addClass('btn btn-success');
+		}
+		else {
+			this.val('OFF');
+			this.removeClass('btn btn-success').addClass('btn btn-danger');
+		}
+
+	}
 });
 
 //why is it shrinking while it rotates??
