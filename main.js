@@ -1,15 +1,13 @@
-//hw: look into flask S3 module
-//hw: make reusable function for determining which toggle buttons are turned on and when a new one is turned on turn off the others.
-
 $(document).ready(function(){
 	var canvas      = document.createElement('canvas'),
-		context     = canvas.getContext('2d'),
+        context     = canvas.getContext('2d'),
 		img         = $('img#image')[0],
 		imgWrapper  = $('div#image-wrapper')[0],
 		imgScale, 
 		initHeight;
 
-	//input, draw to canvas
+   
+	//input. draw to canvas
 	$('input#image-upload').on('change', function (event) {
     	
     	img.src = URL.createObjectURL(event.target.files[0]);
@@ -18,16 +16,22 @@ $(document).ready(function(){
     	img.removeAttribute('width');
     	imgScale = 1.00;
 
-
     	img.onload = function() {
-    		initHeight = this.height;
-			canvas.height = this.height;
-			canvas.width = this.width;
-			context.drawImage(img, 0, 0, this.width, this.height);
-			changeCanvasCallback(canvas, context);
-			this.height = this.height * imgScale;
-			this.width = this.width * imgScale;
+            // first load
+            initHeight = this.height;
+            canvas.height = this.height;
+            canvas.width = this.width
+            context.drawImage(img, 0, 0, this.width, this.height);
+            updateImage.call(this);
+            // reset for subsequest loads
+            this.onload = updateImage;
     	};
+
+        function updateImage () {
+            changeCanvasCallback(canvas, context);
+            this.height = canvas.height * imgScale;
+            this.width  = canvas.width * imgScale;
+        }
 	});
 	//rectangular selector
 	$('button#rectangular-selector').on('click', function (event) {    
@@ -83,7 +87,7 @@ $(document).ready(function(){
 			$('div#image-wrapper').off('mousedown');
 		}
 	});
- 
+    //zoom in
 	$('button#zoom-in').on('click', function (event) {
 		var $this = $(this);
 		
@@ -118,7 +122,7 @@ $(document).ready(function(){
 			$('img#image').off('click');
 		}
 	});
-
+    //zoom out
 	$('button#zoom-out').on('click', function (event) {
 		var $this = $(this);
 		
@@ -149,8 +153,6 @@ $(document).ready(function(){
 				
 				//use jquery to get the workspace, use offset to get top and left and get height and width then depending on where you
 				//click to zoom in or out use that info to recenter the image.
-				// imgDiv.scrollLeft = (mouseX * resize) - (newW/2)/2;
-				// imgDiv.scrollTop  = (mouseY * resize) - (newH/2)/2;
 			});
 		}
 
@@ -206,14 +208,20 @@ $(document).ready(function(){
 		}
 
 	});
-	
 
+	
 	function changeCanvasCallback (canvas, context) {
 		var href = canvas.toDataURL('image/png');
 		$('a#save').prop('href', href);
 		// set listener on filename for change and set download property on a tag to change filename
 	}
 
+    // circular selector
+    /*$('div#image-wrapper').on('mousedown', function (event){
+
+    })*/
+
+    //image crop
     $('button[name="crop-image"]').on('click', function (event) { //on clicking the crop button
         var $selection = $('#selection'),
             position   = $selection.position(),
@@ -232,5 +240,43 @@ $(document).ready(function(){
         imgWrapper.style.top = 0 + 'px';
         imgWrapper.style.left = 0 + 'px';
         $selection.remove();
-    });
+    })
+
+    //image rotation clockwise (can we put an image in there the circle rotating arrow thing)
+    $('button#clockwise').on('click', function (event) {
+        var angleInDegrees = 0;
+
+        angleInDegrees = (angleInDegrees + 90) % 360;
+        drawRotated(angleInDegrees);
+    })
+
+    $('button#counter-clockwise').on('click', function (event) {
+        var angleInDegrees = 0;
+
+        angleInDegrees = (angleInDegrees - 90) % 360;
+        drawRotated(angleInDegrees);
+    })
+
+    function drawRotated (degrees) {
+        var temp = canvas.width;
+
+        canvas.width = canvas.height;
+        canvas.height = temp;
+
+        if (degrees > 0) {
+            context.translate(canvas.width, 0);
+        }
+        else {
+            context.translate(0, canvas.height);
+        }
+        context.rotate(degrees*Math.PI/180);
+        context.drawImage(img, 0, 0);
+        img.src = canvas.toDataURL();
+        img.height = canvas.height * imgScale;
+        img.width = canvas.width * imgScale;
+    }
 });
+
+//why is it shrinking while it rotates??
+// set height and width before it gets to the onload. (not have it degrade)
+//rotate the image. circular selector??
