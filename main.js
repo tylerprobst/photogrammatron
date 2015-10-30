@@ -1,3 +1,5 @@
+//HW: while drawing on an image; make canvas over top of image;
+//HW: when done drawing img.src will = the new canvas.toDataURL();
 $(document).ready(function(){
 	var canvas      = document.createElement('canvas'),
         context     = canvas.getContext('2d'),
@@ -18,13 +20,11 @@ $(document).ready(function(){
     	imgScale = 1.00;
 
     	img.onload = function() {
-            // first load
             initHeight    = this.height;
             canvas.height = this.height;
             canvas.width  = this.width
             context.drawImage(img, 0, 0, this.width, this.height);
             updateImage.call(this);
-            // reset for subsequest loads
             this.onload = updateImage;
     	};
 
@@ -300,13 +300,31 @@ $(document).ready(function(){
     	
     }
 
+    $('button#text').on('click', function (event) {
+    	var position     = $('#selection').position(),
+    		text         = $('#text-content').val(),
+    		fontSize     = $('#font-size').val(),
+    		fontColor    = $('#font-color').val();
+
+    	context.fillStyle = fontColor;
+    	context.font = fontSize + "px sans-serif";
+    	console.log(fontSize);
+    	context.textBaseline = 'top';
+    	context.fillText(text, position.left, position.top);
+    	img.src = canvas.toDataURL();
+		
+    });
+
+
     function changeCanvasCallback (canvas, context) {
 		var href = canvas.toDataURL('image/png');
 		$('a#save').prop('href', href);
-		// set listener on filename for change and set download property on a tag to change filename
+		$('#filename').on('change', function (event) {
+			$('a#save').prop('download', $('#filename').val());
+		});
 	}
 
-	$.fn.buttonController = function () {
+	$.fn.buttonController = function () { //refactor with a variable that holds the last button pressed and turn it and only it off  
 		var $rectSelect = $('button#rectangular-selector'),
 			$zoomIn     = $('button#zoom-in'),
 			$zoomOut    = $('button#zoom-out'),
@@ -340,11 +358,3 @@ $(document).ready(function(){
 
 	}
 });
-
-//why is it shrinking while it rotates??
-// set height and width before it gets to the onload. (not have it degrade)
-//rotate the image. circular selector??
-//add the button for the paint in the buttonController
-//prevent default. event.preventDefault() event.stopPropogation()
-
-//single object to hold all the arguments (a single array of coords.) (kind of like a dictionary)

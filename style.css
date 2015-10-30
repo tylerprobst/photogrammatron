@@ -23,4 +23,6 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
 	border  : 1px dashed #000;
 }
 
-
+#text-wrapper {
+    position: absolute;
+}

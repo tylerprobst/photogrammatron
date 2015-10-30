@@ -1,4 +1,4 @@
-<!doctype html>
+ <!doctype html>
 <html>
     <head>
         <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -38,6 +38,10 @@
                         <div class="form-group">
                             <button class="btn btn-default" name="random-image">Random Image</button>
                         </div>
+                        <div id="save">
+                            <input id="filename" type="text" placeholder="save file as..." />
+                    <a class="btn btn-default" id="save" name="save" download="download.png" title="save"><i class="fa fa-save"></i></a>
+                        </div>
                     </form>
                 </div>
                 <div class="jumbotron col-xs-6">
@@ -48,8 +52,6 @@
                     </div>
                 </div>
                 <div id="right-panel" class="col-xs-3 well">
-                    <input id="filename" type="text" placeholder="save file as..." />
-                    <a title="Save" class="btn btn-default" id="save" name="save" download="download.png"><i class="fa fa-save"></i></a>
                     <p><button title="rectangular selector" class="btn btn-danger" id="rectangular-selector" value="OFF"><i class="fa fa-pencil-square-o"></i></button></p>
                     <p><button title="crop" class="btn btn-default" name="crop-image"><i class="fa fa-crop"></i></button></p>
                     <p><button title="rotate clockwise" class="btn btn-default" id="clockwise"><i class="fa fa-rotate-right"></i></button></p>
@@ -58,6 +60,10 @@
                     <p><button title="zoom-out" class="btn btn-danger" id="zoom-out" value="OFF"><i class="fa fa-search-minus"></i></button></p>
                     <p><button title="move around" class="btn btn-danger" id="nav" value="OFF"><i class="fa fa-arrows"></i></button></p>
                     <p><button title="paint" class="btn btn-danger" id="paint" value="OFF"><i class="fa fa-paint-brush"></i></button></p>
+                    <p><button class="btn btn-default" id="text">Text</button>         
+                    <input type="text" id="text-content" value="enter text here..." /></p>
+                    <p>Font Size: <input type="text" id="font-size" value="12" /></p>
+                    <p>Font Color: <input type="color" id="font-color"></p>
                 </div>
             </div>
         </div>
