@@ -37,24 +37,24 @@ Simplest implementation first
 PHASE 1 MVP (Minimum Viable Product):
 
 Features:
-- link upload (onto canvas display)
++ link upload (onto canvas display)
 
-- crop
-- save (tyler)
++ crop
++ save
 
 UI:
-- rectangular selection
++ rectangular selection
 
 
 PHASE 2:
 
 Features:
-- rotate 
++ rotate 
 
 UI:
-- zoom and navigate around (tyler make crop work with this)
++ zoom and navigate around
 - circular selector 
-- text
+- text (similar to drawing)
 
 
 PHASE 3:

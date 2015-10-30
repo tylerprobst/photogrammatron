@@ -12,7 +12,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="style.css">
         <script type="text/javascript" src="main.js"></script>
-        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     </head>
     <body>
         <nav class="navbar navbar-inverse">
@@ -49,14 +49,15 @@
                 </div>
                 <div id="right-panel" class="col-xs-3 well">
                     <input id="filename" type="text" placeholder="save file as..." />
-                    <a class="btn btn-default" id="save" name="save" download="download.png"><span class="glyphicon glyphicon-download-alt"></span></a>
-                    <p><button class="btn btn-danger" id="rectangular-selector" value="OFF">Rectangular Select</button></p>
-                    <p><button class="btn btn-default" name="crop-image"><i class="fa fa-crop"></i></button></p>
-                    <p><button class="btn btn-default" id="clockwise"><i class="fa fa-rotate-right"></i></button></p>
-                    <p><button class="btn btn-default" id="counter-clockwise"><i class="fa fa-rotate-left"></i></button></p>
-                    <p><button class="btn btn-danger" id="zoom-in" value="OFF"><span class="glyphicon glyphicon-zoom-in"></span></button></p>
-                    <p><button class="btn btn-danger" id="zoom-out" value="OFF"><span class="glyphicon glyphicon-zoom-out"></span></button></p>
-                    <p><button class="btn btn-danger" id="nav" value="OFF"><span class="glyphicon glyphicon-move"></span></button></p>
+                    <a title="Save" class="btn btn-default" id="save" name="save" download="download.png"><i class="fa fa-save"></i></a>
+                    <p><button title="rectangular selector" class="btn btn-danger" id="rectangular-selector" value="OFF"><i class="fa fa-pencil-square-o"></i></button></p>
+                    <p><button title="crop" class="btn btn-default" name="crop-image"><i class="fa fa-crop"></i></button></p>
+                    <p><button title="rotate clockwise" class="btn btn-default" id="clockwise"><i class="fa fa-rotate-right"></i></button></p>
+                    <p><button title="rotate counter-clockwise" class="btn btn-default" id="counter-clockwise"><i class="fa fa-rotate-left"></i></button></p>
+                    <p><button title="zoom-in" class="btn btn-danger" id="zoom-in" value="OFF"><i class="fa fa-search-plus"></i></button></p>
+                    <p><button title="zoom-out" class="btn btn-danger" id="zoom-out" value="OFF"><i class="fa fa-search-minus"></i></button></p>
+                    <p><button title="move around" class="btn btn-danger" id="nav" value="OFF"><i class="fa fa-arrows"></i></button></p>
+                    <p><button title="paint" class="btn btn-danger" id="paint" value="OFF"><i class="fa fa-paint-brush"></i></button></p>
                 </div>
             </div>
         </div>

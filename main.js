@@ -19,9 +19,9 @@ $(document).ready(function(){
 
     	img.onload = function() {
             // first load
-            initHeight = this.height;
+            initHeight    = this.height;
             canvas.height = this.height;
-            canvas.width = this.width
+            canvas.width  = this.width
             context.drawImage(img, 0, 0, this.width, this.height);
             updateImage.call(this);
             // reset for subsequest loads
@@ -30,7 +30,6 @@ $(document).ready(function(){
 
         function updateImage () {
             changeCanvasCallback(canvas, context);
-            console.log(imgScale);
             this.height = canvas.height * imgScale;
             this.width  = canvas.width * imgScale;
         }
@@ -61,7 +60,7 @@ $(document).ready(function(){
 
 		            event.preventDefault();
 
-		            if (bottom < top) top = bottom;
+		            if (bottom < top) top  = bottom;
 		            if (right < left) left = right;
 
 		            $box.css({
@@ -98,11 +97,10 @@ $(document).ready(function(){
 					imgDiv   = img.parentNode;
 
 				imgScale = newH/initHeight;
-				console.log(imgScale);
 				event.preventDefault();
 
 				img.height = newH;
-				img.width = newW;
+				img.width  = newW;
 			});
 		}
 
@@ -130,7 +128,7 @@ $(document).ready(function(){
 				imgScale = newH/initHeight;
 
 				img.height = newH;
-				img.width = newW;
+				img.width  = newW;
 				
 				//use jquery to get the workspace, use offset to get top and left and get height and width then depending on where you
 				//click to zoom in or out use that info to recenter the image.
@@ -166,7 +164,7 @@ $(document).ready(function(){
 
 					event.preventDefault();
 						
-					imgWrapper.style.top = imgTop + offsetY + 'px';
+					imgWrapper.style.top  = imgTop + offsetY + 'px';
 					imgWrapper.style.left = imgLeft + offsetX + 'px';
 
 				});
@@ -182,6 +180,8 @@ $(document).ready(function(){
 		}
 
 	});
+
+    //crop
     $('button[name="crop-image"]').on('click', function (event) {
         var $selection = $('#selection'),
             position   = $selection.position(),
@@ -201,6 +201,7 @@ $(document).ready(function(){
         $selection.remove();
     });
 
+    //rotate clockwise
     $('button#clockwise').on('click', function (event) {
     	var angleInDegrees = 0;
 
@@ -208,6 +209,7 @@ $(document).ready(function(){
     	drawRotated(angleInDegrees);
     });
 
+    //rotate counter clockwise
     $('button#counter-clockwise').on('click', function (event) {
     	var angleInDegrees = 0;
 
@@ -215,12 +217,80 @@ $(document).ready(function(){
     	drawRotated(angleInDegrees);
     });
 
+    //draw things
+    $('button#paint').on('click', function (event){
+        var $this    = $(this),
+            $wrapper = $('div#image-wrapper'),
+            offset   = $wrapper.offset(),
+            clickX = [],
+            clickY = [],
+            clickDrag = [];
+        $this.buttonController();
+
+        if($this.val() === 'ON') {
+            $('img#image').on('mousedown', function (event) {
+                var 
+                    x = event.pageX - offset.left,
+                    y = event.pageY - offset.top;
+                event.preventDefault();
+                paint = true;
+                addClick(x, y, false, clickX, clickY, clickDrag);
+                reDraw(clickX, clickY, clickDrag);
+
+                $('img#image').on('mousemove', function (event) {
+                    var x = event.pageX - offset.left,
+                        y = event.pageY - offset.top;
+                    if (paint) {
+                        addClick(x, y, true, clickX, clickY, clickDrag);
+                        reDraw(clickX, clickY, clickDrag);
+                    }
+                });
+            });
+
+            $('img#image').on('mouseup', function (event) {
+                paint = false;
+                
+            });
+        }
+        else {
+            $('img#image').off('mousedown');
+        }
+    });
+
+    function addClick (x, y, drag, clickX, clickY, clickDrag) {
+
+        clickX.push(x);
+        clickY.push(y);
+        clickDrag.push(drag);
+        //clickColor.push(color);
+    }
+
+    function reDraw (clickX, clickY, clickDrag) {
+        var i = clickX.length - 1;
+        context.strokeStyle = "#000";
+        context.lineJoin = "round";
+        context.lineWidth = 5;
+
+        context.beginPath();
+        if (clickDrag[i] && i) {
+            context.moveTo(clickX[i-1], clickY[i-1]);
+        }
+        else {
+            context.moveTo(clickX[i]-1, clickY[i]);
+        }
+        context.lineTo(clickX[i], clickY[i]);
+        context.closePath();
+        context.stroke();
+
+        img.src = canvas.toDataURL();
+    }
+
     function drawRotated (degrees) {
     	var	temp = canvas.width;
 
     	context.save(); 
 
-    	canvas.width = canvas.height;
+    	canvas.width  = canvas.height;
     	canvas.height = temp;
     	
     	if (degrees > 0) {
@@ -283,3 +353,7 @@ $(document).ready(function(){
 //why is it shrinking while it rotates??
 // set height and width before it gets to the onload. (not have it degrade)
 //rotate the image. circular selector??
+//add the button for the paint in the buttonController
+//prevent default. event.preventDefault() event.stopPropogation()
+
+//single object to hold all the arguments (a single array of coords.) (kind of like a dictionary)
