@@ -217,68 +217,59 @@ $(document).ready(function(){
     	drawRotated(angleInDegrees);
     });
 
-    //draw things
+    //paint things
     $('button#paint').on('click', function (event){
         var $this    = $(this),
             $wrapper = $('div#image-wrapper'),
             offset   = $wrapper.offset(),
-            clickX = [],
-            clickY = [],
-            clickDrag = [];
+            coords   = [];
+
         $this.buttonController();
 
         if($this.val() === 'ON') {
             $('img#image').on('mousedown', function (event) {
-                var 
-                    x = event.pageX - offset.left,
+                var x = event.pageX - offset.left,
                     y = event.pageY - offset.top;
+
                 event.preventDefault();
                 paint = true;
-                addClick(x, y, false, clickX, clickY, clickDrag);
-                reDraw(clickX, clickY, clickDrag);
+                coords.push({ x: x, y: y, drag: false });
+                reDraw(coords);
 
                 $('img#image').on('mousemove', function (event) {
                     var x = event.pageX - offset.left,
                         y = event.pageY - offset.top;
                     if (paint) {
-                        addClick(x, y, true, clickX, clickY, clickDrag);
-                        reDraw(clickX, clickY, clickDrag);
+                        coords.push({ x: x, y: y, drag: true });
+                        reDraw(coords);
                     }
                 });
             });
 
             $('img#image').on('mouseup', function (event) {
-                paint = false;
-                
+                paint = false;          
             });
         }
         else {
             $('img#image').off('mousedown');
+            $('img#image').off('mousemove');
         }
     });
 
-    function addClick (x, y, drag, clickX, clickY, clickDrag) {
-
-        clickX.push(x);
-        clickY.push(y);
-        clickDrag.push(drag);
-        //clickColor.push(color);
-    }
-
-    function reDraw (clickX, clickY, clickDrag) {
-        var i = clickX.length - 1;
+    function reDraw (coords) {
+        var i = coords.length - 1;
         context.strokeStyle = "#000";
         context.lineJoin = "round";
         context.lineWidth = 5;
 
         context.beginPath();
-        if (clickDrag[i] && i) {
-            context.moveTo(clickX[i-1], clickY[i-1]);
+        if (coords[i].drag && i) {
+            context.moveTo(coords[i-1].x, coords[i-1].y);
         }
         else {
-            context.moveTo(clickX[i]-1, clickY[i]);
+            context.moveTo(coords[i].x-1, coords[i].y);
         }
-        context.lineTo(clickX[i], clickY[i]);
+        context.lineTo(coords[i].x, coords[i].y);
         context.closePath();
         context.stroke();
 
