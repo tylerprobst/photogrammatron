@@ -54,7 +54,7 @@ Features:
 UI:
 + zoom and navigate around
 - circular selector 
-- text (similar to drawing)
++ text (similar to drawing)
 
 
 PHASE 3:
@@ -79,3 +79,8 @@ listen for click event. create div. position on page/picture LOOK AT ISSUES NOTE
 
 ****MAKE IT CROP!!!!!!!!!!!!!!
 - - maybe look at resize. ? not important.
+
++//add the button for the paint in the buttonController
++//prevent default. event.preventDefault() event.stopPropogation()
++
++//single object to hold all the arguments (a single array of coords.) (kind of like a dictionary)
