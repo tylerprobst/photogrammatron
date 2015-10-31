@@ -6,14 +6,21 @@
 //changes = [{ type: imgData || diffs, diffs: [34, 1] }]
 
 //HW: undo/redo look up special array types for images.
-//Think of a better name for photogrammatron?	
+//Think of a better name for photogrammatron?
+
+//HW: add redo, protect against beginning of changes and end of changes, if crop save whole image,
+//HW: if rotate save rotate direction	
+
+//put listener for mousemove and and mouseup for draw on the window instead of the image
+
 $(document).ready(function(){
 	var canvas      = document.createElement('canvas'),
         context     = canvas.getContext('2d'),
 		img         = $('img#image')[0],
 		imgWrapper  = $('div#image-wrapper')[0],
 		changes     = [],
-		changeIndex = 0,
+		addChange   = true,
+		changeIndex,
 		lastImage,
 		currentImage,
 		imgScale, 
@@ -38,7 +45,6 @@ $(document).ready(function(){
             canvas.height = this.height;
             canvas.width  = this.width;
             console.log('onload');
-            lastImage = context.getImageData(0, 0, canvas.width, canvas.height);
             context.drawImage(img, 0, 0, this.width, this.height);
             updateImage.call(this);
             this.onload = updateImage;
@@ -238,7 +244,6 @@ $(document).ready(function(){
 
 	    	context.fillStyle = fontColor;
 	    	context.font = fontSize + "px sans-serif";
-	    	console.log(fontSize);
 	    	context.textBaseline = 'top';
 	    	context.fillText(text, position.left, position.top);
 	    	img.src = canvas.toDataURL();
@@ -308,10 +313,9 @@ $(document).ready(function(){
     function drawRotated (degrees) {
     	var	temp = canvas.width;
 
-    	context.save(); 
-
     	canvas.width  = canvas.height;
     	canvas.height = temp;
+    	context.save();
     	
     	if (degrees > 0) {
     	 context.translate(canvas.width, 0);
@@ -335,15 +339,23 @@ $(document).ready(function(){
 		$('#filename').on('change', function (event) {
 			$('a#save').prop('download', $('#filename').val());
 		});
-
-		makeChange();
+		lastImage = currentImage;
+        currentImage = context.getImageData(0, 0, canvas.width, canvas.height);
+       
+        if (addChange) {
+        	makeChange();
+        }
+        else {
+        	addChange = true;
+        }
 	}
 
 	function makeChange () {
-		var currentImage = context.getImageData(0, 0, canvas.width, canvas.height),
-			change 		 = {},
-			change.diffs = [];
+		var change 		 = {};
 
+		currentImage = context.getImageData(0, 0, canvas.width, canvas.height);
+		change.diffs = [];
+		if (!lastImage) return;
 		for (var i = 0; i < currentImage.data.length; i++){
 			if (currentImage.data[i] != lastImage.data[i]) {
 				diff = currentImage.data[i] - lastImage.data[i];
@@ -351,11 +363,11 @@ $(document).ready(function(){
 			}
 		}
 		changes.push(change);
-		changeIndex++;
+		changeIndex = changes.length - 1;
 	}
 
 	function undo () {
-		change = changes[changeIndex-1];
+		var change = changes[changeIndex];
 		console.log('start');
 
 		for (var i = 0; i < change.diffs.length; i++){
@@ -367,6 +379,7 @@ $(document).ready(function(){
 		console.log('done');
 		context.putImageData(currentImage, 0 , 0); 
 		changeIndex--;
+		addChange = false;
 		img.src = canvas.toDataURL();
 	}
 
