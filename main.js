@@ -25,12 +25,8 @@ $(document).ready(function(){
 		currentImage,
 		imgScale, 
 		initHeight;
-
-		window.changes = changes;
-		window.canvas = canvas;
-		window.context = context;
-		window.img  = img;
-
+   
+	//input. draw to canvas
 	$('input#image-upload').on('change', function (event) {
     	
     	img.src = URL.createObjectURL(event.target.files[0]);
@@ -249,65 +245,70 @@ $(document).ready(function(){
 	    	img.src = canvas.toDataURL();
 			
 	 });
-
+    //canvas layer for painting
     $('button#paint').on('click', function (event){
-        var $this    = $(this),
-            $wrapper = $('div#image-wrapper'),
-            offset   = $wrapper.offset(),
-            coords   = [];
+        var $paintLayer  = $('<canvas id="paint-layer" style="z-index 2"></canvas>'),
+            $this        = $(this),
+            $wrapper     = $('div#image-wrapper'),
+            offset       = $wrapper.offset(),
+            coords       = [],
+            paintCanvas  = $paintLayer[0],
+            paintContext = paintCanvas.getContext('2d');
 
+        paintCanvas.width  = img.width;
+        paintCanvas.height = img.height;
         $this.buttonController();
+        $wrapper.append($paintLayer);
 
         if($this.val() === 'ON') {
-            $('img#image').on('mousedown', function (event) {
+            $('canvas#paint-layer').on('mousedown', function (event) {
                 var x = event.pageX - offset.left,
                     y = event.pageY - offset.top;
 
                 event.preventDefault();
                 paint = true;
                 coords.push({ x: x, y: y, drag: false });
-                reDraw(coords);
+                reDraw(coords, paintContext);
 
-                $('img#image').on('mousemove', function (event) {
+                $('canvas#paint-layer').on('mousemove', function (event) {
                     var x = event.pageX - offset.left,
                         y = event.pageY - offset.top;
                     if (paint) {
                         coords.push({ x: x, y: y, drag: true });
-                        reDraw(coords);
+                        reDraw(coords, paintContext);
                     }
                 });
             });
 
-            $('img#image').on('mouseup', function (event) {
-                paint = false;          
+            $('canvas#paint-layer').on('mouseup', function (event) {
+                paint = false;
+
+                reDraw(coords, context, imgScale);
+                img.src = canvas.toDataURL();
             });
-        }
-        else {
-            $('img#image').off('mousedown');
-            $('img#image').off('mousemove');
         }
     });
 
 	$('button#undo').on('click', undo);
-	
-    function reDraw (coords) {
-        var i = coords.length - 1;
-        context.strokeStyle = "#000";
-        context.lineJoin = "round";
-        context.lineWidth = 5;
 
-        context.beginPath();
-        if (coords[i].drag && i) {
-            context.moveTo(coords[i-1].x, coords[i-1].y);
-        }
-        else {
-            context.moveTo(coords[i].x-1, coords[i].y);
-        }
-        context.lineTo(coords[i].x, coords[i].y);
-        context.closePath();
-        context.stroke();
+    function reDraw (coords, ctx, scale) {
+        ctx.strokeStyle = "#000";
+        ctx.lineJoin    = "round";
+        scale           = scale || 1;
+        ctx.lineWidth   = 5 / scale;
 
-        img.src = canvas.toDataURL();
+        for (var i = 0; i < coords.length; i++) {
+            ctx.beginPath();
+            if (coords[i].drag && i) {
+                ctx.moveTo(coords[i-1].x / scale, coords[i-1].y / scale);
+            }
+            else {
+                ctx.moveTo((coords[i].x-1) / scale, coords[i].y / scale);
+            }
+            ctx.lineTo(coords[i].x / scale, coords[i].y / scale);
+            ctx.closePath();
+            ctx.stroke();
+        }
     }
 
     function drawRotated (degrees) {
@@ -328,12 +329,10 @@ $(document).ready(function(){
     	context.rotate(degrees * Math.PI/180);
     	context.drawImage(img, 0, 0);
     	context.restore();
-    	img.src = canvas.toDataURL();
-
-    	
+    	img.src = canvas.toDataURL();   	
     }
 
-    function changeCanvasCallback (canvas, context) {//implement undo/redo here
+    function changeCanvasCallback (canvas, context) { //make undo/redo happen here
 		var href = canvas.toDataURL('image/png');
 		$('a#save').prop('href', href);
 		$('#filename').on('change', function (event) {
@@ -408,10 +407,13 @@ $(document).ready(function(){
 			$nav.removeClass('btn btn-success').addClass('btn btn-danger');
 			$('div#image-wrapper').off('mousedown');
 
-			$paint.val('OFF');
-			$paint.removeClass('btn btn-success').addClass('btn btn-danger');
-			$('img#image').off('mousedown');
-
+            $paint.val('OFF');
+            $paint.removeClass('btn btn-success').addClass('btn btn-danger');
+            $('img#image').off('click');
+            $('canvas#paint-layer').off('mousedown');
+            $('canvas#paint-layer').off('mousemove');
+            $('canvas#paint-layer').remove();
+        //if...
 			this.val('ON');
 			this.removeClass('btn btn-danger').addClass('btn btn-success');
 		}
@@ -419,7 +421,13 @@ $(document).ready(function(){
 			this.val('OFF');
 			this.removeClass('btn btn-success').addClass('btn btn-danger');
 		}
-
-		lastButton = this;  //how to do this when each button has a specific listener....??
 	}
 });
+
+
+//refactor to draw on new canvas over the picture when click paint button...
+//rescale for zooming things (self.scale) x and y values.
+//new name for app
+
+//HW: fix button controllers for rotates if... has class... (click and unclick makes it remove it)
+// paint add colors, change size.

@@ -18,6 +18,12 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
     margin-bottom: 0px;
 }
 
+#paint-layer {
+    position: absolute;
+    top     : 0px;
+    left    : 0px;
+}
+
 #selection {
 	position: absolute;
 	border  : 1px dashed #000;
