@@ -1,15 +1,36 @@
 //HW: while drawing on an image; make canvas over top of image;
 //HW: when done drawing img.src will = the new canvas.toDataURL();
+
+//data = context.getImageData(0,0,canvas.width,canvas.height);
+//context.putImageData(data,0,0)
+//changes = [{ type: imgData || diffs, diffs: [34, 1] }]
+
+//HW: undo/redo look up special array types for images.
+//Think of a better name for photogrammatron?
+
+//HW: add redo, protect against beginning of changes and end of changes, if crop save whole image,
+//HW: if rotate save rotate direction	
+
+//put listener for mousemove and and mouseup for draw on the window instead of the image
+
 $(document).ready(function(){
 	var canvas      = document.createElement('canvas'),
         context     = canvas.getContext('2d'),
 		img         = $('img#image')[0],
 		imgWrapper  = $('div#image-wrapper')[0],
+		changes     = [],
+		addChange   = true,
+		changeIndex,
+		lastImage,
+		currentImage,
 		imgScale, 
 		initHeight;
 
-   
-	//input. draw to canvas
+		window.changes = changes;
+		window.canvas = canvas;
+		window.context = context;
+		window.img  = img;
+
 	$('input#image-upload').on('change', function (event) {
     	
     	img.src = URL.createObjectURL(event.target.files[0]);
@@ -22,7 +43,8 @@ $(document).ready(function(){
     	img.onload = function() {
             initHeight    = this.height;
             canvas.height = this.height;
-            canvas.width  = this.width
+            canvas.width  = this.width;
+            console.log('onload');
             context.drawImage(img, 0, 0, this.width, this.height);
             updateImage.call(this);
             this.onload = updateImage;
@@ -34,7 +56,7 @@ $(document).ready(function(){
             this.width  = canvas.width * imgScale;
         }
 	});
-	//rectangular selector
+
 	$('button#rectangular-selector').on('click', function (event) {    
 		var $this = $(this);
 		$this.buttonController();
@@ -81,7 +103,7 @@ $(document).ready(function(){
 			$('div#image-wrapper').off('mousedown');
 		}
 	});
-    //zoom in
+
 	$('button#zoom-in').on('click', function (event) {
 		var $this = $(this);
 		$this.buttonController();
@@ -108,7 +130,7 @@ $(document).ready(function(){
 			$('img#image').off('click');
 		}
 	});
-    //zoom out
+
 	$('button#zoom-out').on('click', function (event) {
 		var $this = $(this);
 		$this.buttonController();
@@ -132,8 +154,6 @@ $(document).ready(function(){
 				
 				//use jquery to get the workspace, use offset to get top and left and get height and width then depending on where you
 				//click to zoom in or out use that info to recenter the image.
-				// imgDiv.scrollLeft = (mouseX * resize) - (newW/2)/2;
-				// imgDiv.scrollTop  = (mouseY * resize) - (newH/2)/2;
 			});
 		}
 
@@ -194,7 +214,6 @@ $(document).ready(function(){
         initHeight    = height;
 
         context.putImageData(imgData, 0, 0);
-
         img.src = canvas.toDataURL();
         imgWrapper.style.top = 0 + 'px';
         imgWrapper.style.left = 0 + 'px';
@@ -217,7 +236,20 @@ $(document).ready(function(){
     	drawRotated(angleInDegrees);
     });
 
-    //paint things
+	 $('button#text').on('click', function (event) {
+	    	var position     = $('#selection').position(),
+	    		text         = $('#text-content').val(),
+	    		fontSize     = $('#font-size').val(),
+	    		fontColor    = $('#font-color').val();
+
+	    	context.fillStyle = fontColor;
+	    	context.font = fontSize + "px sans-serif";
+	    	context.textBaseline = 'top';
+	    	context.fillText(text, position.left, position.top);
+	    	img.src = canvas.toDataURL();
+			
+	 });
+
     $('button#paint').on('click', function (event){
         var $this    = $(this),
             $wrapper = $('div#image-wrapper'),
@@ -256,6 +288,8 @@ $(document).ready(function(){
         }
     });
 
+	$('button#undo').on('click', undo);
+	
     function reDraw (coords) {
         var i = coords.length - 1;
         context.strokeStyle = "#000";
@@ -279,10 +313,9 @@ $(document).ready(function(){
     function drawRotated (degrees) {
     	var	temp = canvas.width;
 
-    	context.save(); 
-
     	canvas.width  = canvas.height;
     	canvas.height = temp;
+    	context.save();
     	
     	if (degrees > 0) {
     	 context.translate(canvas.width, 0);
@@ -300,35 +333,62 @@ $(document).ready(function(){
     	
     }
 
-    $('button#text').on('click', function (event) {
-    	var position     = $('#selection').position(),
-    		text         = $('#text-content').val(),
-    		fontSize     = $('#font-size').val(),
-    		fontColor    = $('#font-color').val();
-
-    	context.fillStyle = fontColor;
-    	context.font = fontSize + "px sans-serif";
-    	console.log(fontSize);
-    	context.textBaseline = 'top';
-    	context.fillText(text, position.left, position.top);
-    	img.src = canvas.toDataURL();
-		
-    });
-
-
-    function changeCanvasCallback (canvas, context) {
+    function changeCanvasCallback (canvas, context) {//implement undo/redo here
 		var href = canvas.toDataURL('image/png');
 		$('a#save').prop('href', href);
 		$('#filename').on('change', function (event) {
 			$('a#save').prop('download', $('#filename').val());
 		});
+		lastImage = currentImage;
+        currentImage = context.getImageData(0, 0, canvas.width, canvas.height);
+       
+        if (addChange) {
+        	makeChange();
+        }
+        else {
+        	addChange = true;
+        }
+	}
+
+	function makeChange () {
+		var change 		 = {};
+
+		currentImage = context.getImageData(0, 0, canvas.width, canvas.height);
+		change.diffs = [];
+		if (!lastImage) return;
+		for (var i = 0; i < currentImage.data.length; i++){
+			if (currentImage.data[i] != lastImage.data[i]) {
+				diff = currentImage.data[i] - lastImage.data[i];
+				change.diffs.push([i, diff]);
+			}
+		}
+		changes.push(change);
+		changeIndex = changes.length - 1;
+	}
+
+	function undo () {
+		var change = changes[changeIndex];
+		console.log('start');
+
+		for (var i = 0; i < change.diffs.length; i++){
+			var index = change.diffs[i][0],
+				diff  = change.diffs[i][1];
+			currentImage.data[index] = currentImage.data[index] - diff;
+		}
+		
+		console.log('done');
+		context.putImageData(currentImage, 0 , 0); 
+		changeIndex--;
+		addChange = false;
+		img.src = canvas.toDataURL();
 	}
 
 	$.fn.buttonController = function () { //refactor with a variable that holds the last button pressed and turn it and only it off  
 		var $rectSelect = $('button#rectangular-selector'),
 			$zoomIn     = $('button#zoom-in'),
 			$zoomOut    = $('button#zoom-out'),
-			$nav        = $('button#nav');
+			$nav        = $('button#nav'),
+			$paint  	= $('button#paint');	
 
 		if (this.val() === 'OFF') {
 			
@@ -348,6 +408,10 @@ $(document).ready(function(){
 			$nav.removeClass('btn btn-success').addClass('btn btn-danger');
 			$('div#image-wrapper').off('mousedown');
 
+			$paint.val('OFF');
+			$paint.removeClass('btn btn-success').addClass('btn btn-danger');
+			$('img#image').off('mousedown');
+
 			this.val('ON');
 			this.removeClass('btn btn-danger').addClass('btn btn-success');
 		}
@@ -356,5 +420,6 @@ $(document).ready(function(){
 			this.removeClass('btn btn-success').addClass('btn btn-danger');
 		}
 
+		lastButton = this;  //how to do this when each button has a specific listener....??
 	}
 });
