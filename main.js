@@ -1,18 +1,3 @@
-//HW: while drawing on an image; make canvas over top of image;
-//HW: when done drawing img.src will = the new canvas.toDataURL();
-
-//data = context.getImageData(0,0,canvas.width,canvas.height);
-//context.putImageData(data,0,0)
-//changes = [{ type: imgData || diffs, diffs: [34, 1] }]
-
-//HW: undo/redo look up special array types for images.
-//Think of a better name for photogrammatron?
-
-//HW: add redo, protect against beginning of changes and end of changes, if crop save whole image,
-//HW: if rotate save rotate direction	
-
-//put listener for mousemove and and mouseup for draw on the window instead of the image
-
 $(document).ready(function(){
 	var canvas      = document.createElement('canvas'),
         context     = canvas.getContext('2d'),
@@ -27,8 +12,10 @@ $(document).ready(function(){
 		initHeight;
    
 	//input. draw to canvas
-	$('input#image-upload').on('change', function (event) {
-    	
+    imgLoad(event);
+	$('input#image-upload').on('change', imgLoad);
+    
+    function imgLoad (event) {
     	img.src = URL.createObjectURL(event.target.files[0]);
     	
     	img.removeAttribute('height');
@@ -51,7 +38,7 @@ $(document).ready(function(){
             this.height = canvas.height * imgScale;
             this.width  = canvas.width * imgScale;
         }
-	});
+	}
 
 	$('button#rectangular-selector').on('click', function (event) {    
 		var $this = $(this);
@@ -147,9 +134,6 @@ $(document).ready(function(){
 
 				img.height = newH;
 				img.width  = newW;
-				
-				//use jquery to get the workspace, use offset to get top and left and get height and width then depending on where you
-				//click to zoom in or out use that info to recenter the image.
 			});
 		}
 
@@ -290,12 +274,16 @@ $(document).ready(function(){
     });
 
 	$('button#undo').on('click', undo);
+    $('button#grayscale').on('click', grayscale);
 
     function reDraw (coords, ctx, scale) {
+        var paintColor   = $('#paint-color').val();
+
         ctx.strokeStyle = "#000";
         ctx.lineJoin    = "round";
         scale           = scale || 1;
         ctx.lineWidth   = 5 / scale;
+        ctx.fillStyle   = paintColor;
 
         for (var i = 0; i < coords.length; i++) {
             ctx.beginPath();
@@ -365,6 +353,25 @@ $(document).ready(function(){
 		changeIndex = changes.length - 1;
 	}
 
+    function grayscale () {
+        var imgData = context.getImageData(0, 0, canvas.width, canvas.height),
+            r, g, b, average;
+
+        for (var i = 0; i < imgData.data.length; i+=4) {
+            r = imgData.data[i];
+            g = imgData.data[i+1];
+            b = imgData.data[i+2];
+            average = (r + g + b) / 3;
+
+            imgData.data[i] = average;
+            imgData.data[i+1] = average;
+            imgData.data[i+2] = average;
+        }
+
+        context.putImageData(imgData, 0, 0);
+        img.src = canvas.toDataURL();
+    }
+
 	function undo () {
 		var change = changes[changeIndex];
 		console.log('start');
@@ -423,11 +430,3 @@ $(document).ready(function(){
 		}
 	}
 });
-
-
-//refactor to draw on new canvas over the picture when click paint button...
-//rescale for zooming things (self.scale) x and y values.
-//new name for app
-
-//HW: fix button controllers for rotates if... has class... (click and unclick makes it remove it)
-// paint add colors, change size.
