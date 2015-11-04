@@ -59,14 +59,25 @@
                     <p><button title="Zoom-In" class="btn btn-danger" id="zoom-in" value="OFF"><i class="fa fa-search-plus"></i></button>
                     <button title="Zoom-Out" class="btn btn-danger" id="zoom-out" value="OFF"><i class="fa fa-search-minus"></i></button></p>
                     <p><button title="Navigate" class="btn btn-danger" id="nav" value="OFF"><i class="fa fa-arrows"></i></button></p>
-                    <p><button title="Paint" class="btn btn-danger" id="paint" value="OFF"><i class="fa fa-paint-brush"></i></button></p>
-                    <p>Paint Color: <input type="color" id="paint-color"></p>
-                    <p><button class="btn btn-default" id="text">Text</button>         
-                    <input type="text" id="text-content" value="enter text here..." /></p>
-                    <p>Font Size: <input type="text" id="font-size" value="12" /></p>
-                    <p>Font Color: <input type="color" id="font-color"></p>
-                    <p><button title="Undo" class="btn btn-default" id="undo" >Undo</button></p>
-                    <p><button title="grayscale" class="btn btn-default" id="grayscale">Grayscale</button></p>
+                    <p><button title="Paint" class="btn btn-danger" id="paint" value="OFF"><i class="fa fa-paint-brush"></i></button>
+                    Paint Color: <input type="color" id="paint-color"></p>
+                    Paint Size: <input type="text" id="line-size" value="5" /> </p>
+                    <button class="btn btn-default" id="text">Text</button>         
+                    <input type="text" id="text-content" placeholder="enter text here..." /></p>
+                    <p>Text Size: <input type="text" id="text-size" value="12" /></p>
+                    <p>Text Color: <input type="color" id="text-color"></p>
+                    <p>Text Font: <select id="font-style" class="input">
+                        <option value="Arial" selected="selected">Arial</option>
+                        <option value="Courier">Courier</option>
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Verdana">Verdana</option>
+                    </select></p>
+                    <p><button title="Undo" class="btn btn-default" id="undo">Undo</button></p>
+                    <p><button title="Grayscale" class="btn btn-default" id="grayscale">Grayscale</button></p>
+                    <p><button title="Sepia" class="btn btn-default" id="sepia">Sepia</button></p>
+                    <p><input type="range" title="Brightness" value="0" min="-50" max="50" id="brightness"></input></p>
+                    <p id="bright-text">Adjust Brightness</p>
                 </div>
             </div>
         </div>

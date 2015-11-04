@@ -8,6 +8,7 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
     width 	: 650px;
     overflow: hidden;
     position: relative;
+    background-color: white;
 }
 
 #image-wrapper {
@@ -31,4 +32,22 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
 
 #text-wrapper {
     position: absolute;
+}
+
+#bright-text {
+    text-align: center;
+}
+
+.btn {
+    border-radius: 24px;
+    box-shadow: 0 3px 0 0;
+}
+
+input {
+    border-radius: 20px;
+}
+
+
+#left-panel {
+    background-color: green;
 }

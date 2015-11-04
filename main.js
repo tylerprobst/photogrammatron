@@ -9,10 +9,10 @@ $(document).ready(function(){
 		lastImage,
 		currentImage,
 		imgScale, 
-		initHeight;
+		initHeight
+        fontStyle = 'Arial';
    
 	//input. draw to canvas
-    imgLoad(event);
 	$('input#image-upload').on('change', imgLoad);
     
     function imgLoad (event) {
@@ -27,7 +27,6 @@ $(document).ready(function(){
             initHeight    = this.height;
             canvas.height = this.height;
             canvas.width  = this.width;
-            console.log('onload');
             context.drawImage(img, 0, 0, this.width, this.height);
             updateImage.call(this);
             this.onload = updateImage;
@@ -216,19 +215,24 @@ $(document).ready(function(){
     	drawRotated(angleInDegrees);
     });
 
+    //write text
 	 $('button#text').on('click', function (event) {
 	    	var position     = $('#selection').position(),
 	    		text         = $('#text-content').val(),
-	    		fontSize     = $('#font-size').val(),
-	    		fontColor    = $('#font-color').val();
+	    		textSize     = $('#text-size').val(),
+	    		textColor    = $('#text-color').val();
 
-	    	context.fillStyle = fontColor;
-	    	context.font = fontSize + "px sans-serif";
+	    	context.fillStyle = textColor;
+	    	context.font = textSize + "px " + fontStyle;
 	    	context.textBaseline = 'top';
-	    	context.fillText(text, position.left, position.top);
+	    	context.fillText(text, position.left / imgScale, position.top / imgScale);
 	    	img.src = canvas.toDataURL();
 			
 	 });
+    //change fonts for text
+    $('select#font-style').on('change', function (event) {
+        fontStyle = $('input#text-content')[0].style.fontFamily = event.currentTarget.value;
+    });
     //canvas layer for painting
     $('button#paint').on('click', function (event){
         var $paintLayer  = $('<canvas id="paint-layer" style="z-index 2"></canvas>'),
@@ -268,6 +272,7 @@ $(document).ready(function(){
                 paint = false;
 
                 reDraw(coords, context, imgScale);
+                coords = [];
                 img.src = canvas.toDataURL();
             });
         }
@@ -275,15 +280,17 @@ $(document).ready(function(){
 
 	$('button#undo').on('click', undo);
     $('button#grayscale').on('click', grayscale);
+    $('button#sepia').on('click', sepia);
+    $('input#brightness').on('mouseup', brightness);
 
     function reDraw (coords, ctx, scale) {
-        var paintColor   = $('#paint-color').val();
+        var paintColor = $('#paint-color').val();
+            lineSize  = $('#line-size').val();
 
-        ctx.strokeStyle = "#000";
+        ctx.strokeStyle = paintColor;
         ctx.lineJoin    = "round";
         scale           = scale || 1;
-        ctx.lineWidth   = 5 / scale;
-        ctx.fillStyle   = paintColor;
+        ctx.lineWidth   = lineSize / scale;
 
         for (var i = 0; i < coords.length; i++) {
             ctx.beginPath();
@@ -363,11 +370,41 @@ $(document).ready(function(){
             b = imgData.data[i+2];
             average = (r + g + b) / 3;
 
-            imgData.data[i] = average;
+            imgData.data[i]   = average;
             imgData.data[i+1] = average;
             imgData.data[i+2] = average;
         }
+        context.putImageData(imgData, 0, 0);
+        img.src = canvas.toDataURL();
+    }
 
+    function sepia () {
+        var imgData = context.getImageData(0, 0, canvas.width, canvas.height),
+            r, g, b;
+
+        for (var i = 0; i < imgData.data.length; i+=4) {
+            r = imgData.data[i];
+            g = imgData.data[i+1];
+            b = imgData.data[i+2];
+
+            imgData.data[i]   = (r * 0.393)+(g * 0.769)+(b * 0.189);
+            imgData.data[i+1] = (r * 0.349)+(g * 0.686)+(b * 0.168);
+            imgData.data[i+2] = (r * 0.272)+(g * 0.534)+(b * 0.131);
+        }
+        context.putImageData(imgData, 0, 0);
+        img.src = canvas.toDataURL();
+    }
+
+    function brightness (event) {
+        var $range = $(event.currentTarget),
+            adjusts = $range.val(),
+            imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+        for (var i = 0; i < imgData.data.length; i+=4) {
+            imgData.data[i]   += adjusts;
+            imgData.data[i+1] += adjusts;
+            imgData.data[i+2] += adjusts;
+        }
         context.putImageData(imgData, 0, 0);
         img.src = canvas.toDataURL();
     }
@@ -420,13 +457,15 @@ $(document).ready(function(){
             $('canvas#paint-layer').off('mousedown');
             $('canvas#paint-layer').off('mousemove');
             $('canvas#paint-layer').remove();
-        //if...
+
 			this.val('ON');
 			this.removeClass('btn btn-danger').addClass('btn btn-success');
-		}
+        }
+
 		else {
 			this.val('OFF');
 			this.removeClass('btn btn-success').addClass('btn btn-danger');
+            $('canvas#paint-layer').remove();
 		}
 	}
 });
