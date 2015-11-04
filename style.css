@@ -4,10 +4,12 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
 
 #image-workspace {
     border	: 1px solid black;
-    height	: 800px;
-    width 	: 650px;
+    height	: 650px;
+    width 	: 600px;
     overflow: hidden;
     position: relative;
+    top: -38px;
+    left: -50px;
 }
 
 #image-wrapper {
