@@ -9,11 +9,16 @@ $(document).ready(function(){
 		lastImage,
 		currentImage,
 		imgScale, 
-		initHeight
+		initHeight,
+        liveFilterBase,
         fontStyle = 'Arial';
    
 	//input. draw to canvas
 	$('input#image-upload').on('change', imgLoad);
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
     
     function imgLoad (event) {
     	img.src = URL.createObjectURL(event.target.files[0]);
@@ -28,6 +33,7 @@ $(document).ready(function(){
             canvas.height = this.height;
             canvas.width  = this.width;
             context.drawImage(img, 0, 0, this.width, this.height);
+            liveFilterBase = context.getImageData(0, 0, canvas.width, canvas.height);
             updateImage.call(this);
             this.onload = updateImage;
     	};
@@ -201,15 +207,19 @@ $(document).ready(function(){
 
     //rotate clockwise
     $('button#clockwise').on('click', function (event) {
-    	var angleInDegrees = 0;
+        var angleInDegrees = 0,
+            $this = $(this);
+        $this.buttonController();
 
-    	angleInDegrees = (angleInDegrees + 90) % 360;
-    	drawRotated(angleInDegrees);
+        	angleInDegrees = (angleInDegrees + 90) % 360;
+        	drawRotated(angleInDegrees);
     });
 
     //rotate counter clockwise
     $('button#counter-clockwise').on('click', function (event) {
-    	var angleInDegrees = 0;
+    	var angleInDegrees = 0,
+            $this = $(this);
+        $this.buttonController();
 
     	angleInDegrees = (angleInDegrees - 90) % 360;
     	drawRotated(angleInDegrees);
@@ -217,16 +227,18 @@ $(document).ready(function(){
 
     //write text
 	 $('button#text').on('click', function (event) {
-	    	var position     = $('#selection').position(),
-	    		text         = $('#text-content').val(),
-	    		textSize     = $('#text-size').val(),
-	    		textColor    = $('#text-color').val();
+    	var position  = $('#selection').position(),
+    		text      = $('#text-content').val(),
+    		textSize  = $('#text-size').val(),
+    		textColor = $('#text-color').val(),
+            $this     = $(this);
+        $this.buttonController();
 
-	    	context.fillStyle = textColor;
-	    	context.font = textSize + "px " + fontStyle;
-	    	context.textBaseline = 'top';
-	    	context.fillText(text, position.left / imgScale, position.top / imgScale);
-	    	img.src = canvas.toDataURL();
+    	context.fillStyle = textColor;
+    	context.font = textSize + "px " + fontStyle;
+    	context.textBaseline = 'top';
+    	context.fillText(text, position.left / imgScale, position.top / imgScale);
+    	img.src = canvas.toDataURL();
 			
 	 });
     //change fonts for text
@@ -281,6 +293,7 @@ $(document).ready(function(){
 	$('button#undo').on('click', undo);
     $('button#grayscale').on('click', grayscale);
     $('button#sepia').on('click', sepia);
+
     $('input#brightness').on('mouseup', brightness);
 
     function reDraw (coords, ctx, scale) {
@@ -396,14 +409,15 @@ $(document).ready(function(){
     }
 
     function brightness (event) {
-        var $range = $(event.currentTarget),
-            adjusts = $range.val(),
+        var $this   = $(this),
+            adjusts = parseInt($this.val()),
             imgData = context.getImageData(0, 0, canvas.width, canvas.height);
 
+            console.log(adjusts);
         for (var i = 0; i < imgData.data.length; i+=4) {
-            imgData.data[i]   += adjusts;
-            imgData.data[i+1] += adjusts;
-            imgData.data[i+2] += adjusts;
+            imgData.data[i] = liveFilterBase.data[i] + adjusts;
+            imgData.data[i+1] = liveFilterBase.data[i+1] + adjusts;
+            imgData.data[i+2] = liveFilterBase.data[i+2] + adjusts;
         }
         context.putImageData(imgData, 0, 0);
         img.src = canvas.toDataURL();
@@ -411,7 +425,6 @@ $(document).ready(function(){
 
 	function undo () {
 		var change = changes[changeIndex];
-		console.log('start');
 
 		for (var i = 0; i < change.diffs.length; i++){
 			var index = change.diffs[i][0],
@@ -419,7 +432,6 @@ $(document).ready(function(){
 			currentImage.data[index] = currentImage.data[index] - diff;
 		}
 		
-		console.log('done');
 		context.putImageData(currentImage, 0 , 0); 
 		changeIndex--;
 		addChange = false;
@@ -427,14 +439,21 @@ $(document).ready(function(){
 	}
 
 	$.fn.buttonController = function () { //refactor with a variable that holds the last button pressed and turn it and only it off  
-		var $rectSelect = $('button#rectangular-selector'),
-			$zoomIn     = $('button#zoom-in'),
-			$zoomOut    = $('button#zoom-out'),
-			$nav        = $('button#nav'),
-			$paint  	= $('button#paint');	
+		var $rectSelect    = $('button#rectangular-selector'),
+			$zoomIn        = $('button#zoom-in'),
+			$zoomOut       = $('button#zoom-out'),
+			$nav           = $('button#nav'),
+			$paint  	   = $('button#paint'),
+            $rotateClock   = $('button#clockwise'),
+            $rotateCounter = $('button#counter-clockwise'),
+            $crop          = $('button[name="crop-image"]'),
+            $undo          = $('button#undo'),
+            $grayscale     = $('button#grayscale'),
+            $sepia         = $('button#sepia'),
+            $text          = $('button#text');
 
-		if (this.val() === 'OFF') {
-			
+		if (this.val() === 'OFF' || this.hasClass('btn-default')) {
+
 			$rectSelect.val('OFF');
 			$rectSelect.removeClass('btn btn-success').addClass('btn btn-danger');
 			$('div#image-wrapper').off('mousedown');
@@ -458,8 +477,25 @@ $(document).ready(function(){
             $('canvas#paint-layer').off('mousemove');
             $('canvas#paint-layer').remove();
 
-			this.val('ON');
-			this.removeClass('btn btn-danger').addClass('btn btn-success');
+            $rotateClock.val('OFF');
+
+            $rotateCounter.val('OFF');
+
+            $crop.val('OFF');
+
+            $undo.val('OFF');
+
+            $grayscale.val('OFF');
+
+            $sepia.val('OFF');
+
+            $text.val('OFF');
+
+            if (!this.hasClass('btn-default')) {
+                this.val('ON');
+                this.removeClass('btn btn-danger').addClass('btn btn-success');
+
+            }
         }
 
 		else {
