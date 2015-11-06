@@ -7,13 +7,15 @@ $(document).ready(function(){
 		addChange   = true,
 		cropped     = false,
 		changeIndex,
+		clockwise,
+		counterClockwise,
 		lastImage,
 		currentImage,
 		imgScale, 
 		initHeight;
 
-	imgLoad();	
-			
+	window.canvas = canvas;
+	
 	$('input#image-upload').on('change', function (event) {
 		imgLoad(event);
 	});
@@ -193,6 +195,7 @@ $(document).ready(function(){
     	// this.buttonController();
     	angleInDegrees = (angleInDegrees + 90) % 360;
     	drawRotated(angleInDegrees);
+    	clockwise = true;
     });
 
     //rotate counter clockwise
@@ -201,6 +204,7 @@ $(document).ready(function(){
     	// this.buttonController();
     	angleInDegrees = (angleInDegrees - 90) % 360;
     	drawRotated(angleInDegrees);
+    	counterClockwise = true;
     });
 
 	 $('button#text').on('click', function (event) {
@@ -241,7 +245,7 @@ $(document).ready(function(){
                 coords.push({ x: x, y: y, drag: false });
                 reDraw(coords, paintContext);
 
-                $('canvas#paint-layer').on('mousemove', function (event) {
+                $(window).on('mousemove', function (event) {
                     var x = event.pageX - offset.left,
                         y = event.pageY - offset.top;
                     if (paint) {
@@ -251,7 +255,7 @@ $(document).ready(function(){
                 });
             });
 
-            $('canvas#paint-layer').on('mouseup', function (event) {
+            $(window).on('mouseup', function (event) {
                 paint = false;
 
                 reDraw(coords, context, imgScale);
@@ -314,8 +318,6 @@ $(document).ready(function(){
 		});
 		lastImage = currentImage;
         currentImage = context.getImageData(0, 0, canvas.width, canvas.height);
-        window.currentImage = currentImage;
-       	console.log('callback');
         if (addChange) {
         	makeChange();
         }
@@ -336,7 +338,6 @@ $(document).ready(function(){
             initHeight    = this.height;
             canvas.height = this.height;
             canvas.width  = this.width;
-            console.log('onload');
             context.drawImage(img, 0, 0, this.width, this.height);
             updateImage.call(this);
             this.onload = updateImage;
@@ -379,11 +380,20 @@ $(document).ready(function(){
 
 		if (cropped) {
 			change.cropped = lastImage;
+			change.croppedRedo = currentImage;
 			cropped = false;
-			console.log(change.cropped);
-
 		}
-	
+		//rotated, direction of rotation saved
+		else if (clockwise || counterClockwise) {
+			if (clockwise) {
+				change.rotated = 'right';
+				clockwise = false;
+			}
+			else {
+				change.rotated = 'left';
+				counterClockwise = false;
+			}
+		}
 		//diffs
 		else {
 			change.diffs = [];
@@ -405,8 +415,13 @@ $(document).ready(function(){
 
 	function undo () {
 		var change = changes[changeIndex];
+	
+		addChange = false;
 
-		if (!change) return console.log('undo end');
+		if (!change) {
+			addChange = true;
+			return console.log('undo end');
+		}
 	
 		if (change.cropped){
 			canvas.height = change.cropped.height;
@@ -414,6 +429,14 @@ $(document).ready(function(){
 			context.putImageData(change.cropped, 0, 0);
 		}
 		
+		else if (change.rotated === 'left') {
+			drawRotated(90);
+		}
+		
+		else if (change.rotated === 'right') {
+			drawRotated(-90);
+		}
+
 		else {
 			for (var i = 0; i < change.diffs.length; i++){
 				var index = change.diffs[i][0],
@@ -421,28 +444,39 @@ $(document).ready(function(){
 				currentImage.data[index] = currentImage.data[index] - diff;
 			}
 
-			context.putImageData(currentImage, 0 , 0); 
+			context.putImageData(currentImage, 0 , 0);
 		}
 
 		
 		changeIndex--;
-		console.log(changeIndex);
-		addChange = false;
 		img.src = canvas.toDataURL();
 	}
 
 	function redo () {
 		var change;
-		change = changes[changeIndex+1];
 		
-		if (!change) return console.log('redo end');
-
-		if (change.cropped) {
-			canvas.height = change.cropped.height;
-			canvas.width  = change.cropped.width;
-			context.putImageData(change.cropped, 0, 0);
+		change = changes[changeIndex+1];
+		addChange = false;
+		
+		if (!change) {
+			addChange = true;
+			return console.log('redo end');
+		}
+		//cropped
+		if (change.croppedRedo) {
+			canvas.height = change.croppedRedo.height;
+			canvas.width  = change.croppedRedo.width;
+			context.putImageData(change.croppedRedo, 0, 0);
 		}
 
+		else if (change.rotated === 'left') {
+			drawRotated(-90);
+		}
+		
+		else if (change.rotated === 'right') {
+			drawRotated(90);
+		}
+		//diffs
 		else {
 			for (var i = 0; i < change.diffs.length; i++){
 				var index = change.diffs[i][0];
@@ -455,8 +489,6 @@ $(document).ready(function(){
 
 		
 		changeIndex++;
-		console.log(changeIndex);
-		addChange = false;
 		img.src = canvas.toDataURL();
 	}
 

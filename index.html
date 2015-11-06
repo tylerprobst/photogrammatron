@@ -12,6 +12,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="style.css">
         <script type="text/javascript" src="main.js"></script>
+        <script type="text/javascript" src="facebookOauth.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     </head>
     <body>
@@ -70,6 +71,10 @@
                 </div>
             </div>
         </div>
+        <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+        </fb:login-button>
+        <div id="status">
+        </div>    
     </body>
 </html>
 
