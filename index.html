@@ -12,6 +12,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="style.css">
         <script type="text/javascript" src="main.js"></script>
+        <script type="text/javascript" src="facebookOauth.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     </head>
     <body>
@@ -47,7 +48,7 @@
                 <div class="jumbotron col-xs-6">
                     <div id="image-workspace">
                         <div id="image-wrapper">
-                            <img id="image" style="z-index 1">
+                            <img id="image" style="z-index 1" >
                         </div>
                     </div>
                 </div>
@@ -64,10 +65,16 @@
                     <input type="text" id="text-content" value="enter text here..." /></p>
                     <p>Font Size: <input type="text" id="font-size" value="12" /></p>
                     <p>Font Color: <input type="color" id="font-color"></p>
-                    <p><button title="Undo" class="btn btn-default" id="undo" >Undo</button></p>
+                    <p><button title="Undo" class="btn btn-default" id="undo" >Undo</button>
+                    <button title="Redo" class="btn btn-default" id="redo" >Redo</button></p>
+                    <p><button title="grayscale" class="btn btn-default" id="grayscale" >GrayScale</button></p>
                 </div>
             </div>
         </div>
+        <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+        </fb:login-button>
+        <div id="status">
+        </div>    
     </body>
 </html>
 
