@@ -5,7 +5,10 @@ $(document).ready(function(){
 		imgWrapper  = $('div#image-wrapper')[0],
 		changes     = [],
 		addChange   = true,
+		cropped     = false,
 		changeIndex,
+		clockwise,
+		counterClockwise,
 		lastImage,
 		currentImage,
 		imgScale, 
@@ -17,34 +20,10 @@ $(document).ready(function(){
 	$('input#image-upload').on('change', imgLoad);
 
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
-    
-    function imgLoad (event) {
-    	img.src = URL.createObjectURL(event.target.files[0]);
-    	
-    	img.removeAttribute('height');
-    	img.removeAttribute('width');
-    	
-    	imgScale = 1.00;
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 
-    	img.onload = function() {
-            initHeight    = this.height;
-            canvas.height = this.height;
-            canvas.width  = this.width;
-            context.drawImage(img, 0, 0, this.width, this.height);
-            liveFilterBase = context.getImageData(0, 0, canvas.width, canvas.height);
-            updateImage.call(this);
-            this.onload = updateImage;
-    	};
-
-        function updateImage () {
-            changeCanvasCallback(canvas, context);
-            this.height = canvas.height * imgScale;
-            this.width  = canvas.width * imgScale;
-        }
-	}
-
+    //rectangular selector
 	$('button#rectangular-selector').on('click', function (event) {    
 		var $this = $(this);
 		$this.buttonController();
@@ -79,7 +58,6 @@ $(document).ready(function(){
 		                height: height + 'px',
 		                width: width + 'px'
 		            })
-
 		        });
 
 		        $(window).one('mouseup', function (event) { 
@@ -95,7 +73,6 @@ $(document).ready(function(){
 	$('button#zoom-in').on('click', function (event) {
 		var $this = $(this);
 		$this.buttonController();
-
 
 		if ($this.val() === 'ON') {
 			$('img#image').on('click', function (event) {	
@@ -113,7 +90,6 @@ $(document).ready(function(){
 				img.width  = newW;
 			});
 		}
-
 		else {
 			$('img#image').off('click');
 		}
@@ -123,7 +99,6 @@ $(document).ready(function(){
 		var $this = $(this);
 		$this.buttonController();
 
-
 		if ($this.val() === 'ON') {
 			$('img#image').on('click', function (event) {	
 				var resize = 0.9,
@@ -131,17 +106,22 @@ $(document).ready(function(){
 					mouseY = event.pageY,
 					newH   = img.height * resize,
 					newW   = img.width * resize,
-					imgDiv = img.parentNode;
+					imgDiv = img.parentNode,
+					imgLeft = mouseX * .09,
+					imgTop  = mouseY * .09;
+
 
 				event.preventDefault();
 
 				imgScale = newH/initHeight;
 
+				imgWrapper.style.top  = (img.height - newH)/2 + 'px';
+				imgWrapper.style.left  = (img.width - newW)/2 + 'px';
+				
 				img.height = newH;
 				img.width  = newW;
 			});
 		}
-
 		else {
 			$('img#image').off('click');
 		};
@@ -179,7 +159,6 @@ $(document).ready(function(){
 				});
 			});
 		}
-
 		else {
 			$('div#image-wrapper').off('mousedown');
 		}
@@ -192,7 +171,9 @@ $(document).ready(function(){
             position   = $selection.position(),
             height     = $selection.height()/imgScale,
             width      = $selection.width()/imgScale,
-            imgData    = context.getImageData(position.left/imgScale, position.top/imgScale, width, height);
+            imgData    = context.getImageData(position.left/imgScale, position.top/imgScale, width, height),
+            $this = $(this);
+        $this.buttonController();
 
         canvas.height = height;
         canvas.width  = width;
@@ -203,26 +184,31 @@ $(document).ready(function(){
         imgWrapper.style.top = 0 + 'px';
         imgWrapper.style.left = 0 + 'px';
         $selection.remove();
+        cropped = true;
     });
 
     //rotate clockwise
     $('button#clockwise').on('click', function (event) {
         var angleInDegrees = 0,
             $this = $(this);
+
         $this.buttonController();
 
-        	angleInDegrees = (angleInDegrees + 90) % 360;
-        	drawRotated(angleInDegrees);
+    	angleInDegrees = (angleInDegrees + 90) % 360;
+    	drawRotated(angleInDegrees);
+        clockwise = true;
     });
 
     //rotate counter clockwise
     $('button#counter-clockwise').on('click', function (event) {
     	var angleInDegrees = 0,
             $this = $(this);
+
         $this.buttonController();
 
     	angleInDegrees = (angleInDegrees - 90) % 360;
     	drawRotated(angleInDegrees);
+    	counterClockwise = true;
     });
 
     //write text
@@ -232,21 +218,23 @@ $(document).ready(function(){
     		textSize  = $('#text-size').val(),
     		textColor = $('#text-color').val(),
             $this     = $(this);
+
         $this.buttonController();
 
     	context.fillStyle = textColor;
     	context.font = textSize + "px " + fontStyle;
     	context.textBaseline = 'top';
     	context.fillText(text, position.left / imgScale, position.top / imgScale);
-    	img.src = canvas.toDataURL();
-			
-	 });
+    	img.src = canvas.toDataURL();		
+	});
+
     //change fonts for text
     $('select#font-style').on('change', function (event) {
         fontStyle = $('input#text-content')[0].style.fontFamily = event.currentTarget.value;
     });
+
     //canvas layer for painting
-    $('button#paint').on('click', function (event){
+    $('button#paint').on('click', function (event) {
         var $paintLayer  = $('<canvas id="paint-layer" style="z-index 2"></canvas>'),
             $this        = $(this),
             $wrapper     = $('div#image-wrapper'),
@@ -270,7 +258,7 @@ $(document).ready(function(){
                 coords.push({ x: x, y: y, drag: false });
                 reDraw(coords, paintContext);
 
-                $('canvas#paint-layer').on('mousemove', function (event) {
+                $(window).on('mousemove', function (event) {
                     var x = event.pageX - offset.left,
                         y = event.pageY - offset.top;
                     if (paint) {
@@ -280,9 +268,9 @@ $(document).ready(function(){
                 });
             });
 
-            $('canvas#paint-layer').on('mouseup', function (event) {
-                paint = false;
+            $(window).on('mouseup', function (event) {
 
+                paint = false;
                 reDraw(coords, context, imgScale);
                 coords = [];
                 img.src = canvas.toDataURL();
@@ -291,10 +279,11 @@ $(document).ready(function(){
     });
 
 	$('button#undo').on('click', undo);
+    $('button#redo').on('click', redo);
     $('button#grayscale').on('click', grayscale);
     $('button#sepia').on('click', sepia);
-
     $('input#brightness').on('mouseup', brightness);
+    $('input#contrast').on('mouseup', contrast);
 
     function reDraw (coords, ctx, scale) {
         var paintColor = $('#paint-color').val();
@@ -348,7 +337,6 @@ $(document).ready(function(){
 		});
 		lastImage = currentImage;
         currentImage = context.getImageData(0, 0, canvas.width, canvas.height);
-       
         if (addChange) {
         	makeChange();
         }
@@ -357,25 +345,99 @@ $(document).ready(function(){
         }
 	}
 
-	function makeChange () {
-		var change 		 = {};
+	function imgLoad (event) {
+		if(event) img.src = URL.createObjectURL(event.target.files[0]);
+    	
+    	img.removeAttribute('height');
+    	img.removeAttribute('width');
+    	
+    	imgScale = 1.00;
 
-		currentImage = context.getImageData(0, 0, canvas.width, canvas.height);
-		change.diffs = [];
-		if (!lastImage) return;
-		for (var i = 0; i < currentImage.data.length; i++){
-			if (currentImage.data[i] != lastImage.data[i]) {
-				diff = currentImage.data[i] - lastImage.data[i];
-				change.diffs.push([i, diff]);
-			}
-		}
-		changes.push(change);
-		changeIndex = changes.length - 1;
+    	img.onload = function() {
+            initHeight    = this.height;
+            canvas.height = this.height;
+            canvas.width  = this.width;
+            context.drawImage(img, 0, 0, this.width, this.height);
+            liveFilterBase = context.getImageData(0, 0, canvas.width, canvas.height);
+            updateImage.call(this);
+            this.onload = updateImage;
+    	};
+
+        function updateImage () {
+            changeCanvasCallback(canvas, context);
+            this.height = canvas.height * imgScale;
+            this.width  = canvas.width * imgScale;
+        }
 	}
 
+	function grayscale () {
+		var imgData = context.getImageData(0, 0, canvas.width, canvas.height),
+			r,
+			g,
+			b,
+			average;
+
+		for (var i = 0; i < imgData.data.length; i+=4) {
+			r = imgData.data[i];
+			g = imgData.data[i+1];
+			b = imgData.data[i+2];
+			average = (r + g + b) / 3;
+			imgData.data[i] = imgData.data[i+1] = imgData.data[i+2] = average;
+		}
+		
+		context.putImageData(imgData, 0, 0);
+		img.src = canvas.toDataURL();
+	}
+
+	function makeChange () {
+		var change 		 = {};
+		currentImage = context.getImageData(0, 0, canvas.width, canvas.height);
+		
+		if (!lastImage) return;
+	
+		//cropped
+
+		if (cropped) {
+			change.cropped = lastImage;
+			change.croppedRedo = currentImage;
+			cropped = false;
+		}
+		//rotated, direction of rotation saved
+		else if (clockwise || counterClockwise) {
+			if (clockwise) {
+				change.rotated = 'right';
+				clockwise = false;
+			}
+			else {
+				change.rotated = 'left';
+				counterClockwise = false;
+			}
+		}
+		//diffs
+		else {
+			change.diffs = [];
+			for (var i = 0; i < currentImage.data.length; i++){
+				if (currentImage.data[i] != lastImage.data[i]) {
+					diff = currentImage.data[i] - lastImage.data[i];
+					change.diffs.push([i, diff]);
+				}
+			}
+		}
+
+		if (changeIndex < changes.length - 1){
+			changes.splice(changeIndex+1, changes.length - changeIndex+1);
+		}
+
+		changes.push(change);
+		changeIndex = changeIndex + 1 || 0;
+	}
+
+    //grayscale filter
     function grayscale () {
         var imgData = context.getImageData(0, 0, canvas.width, canvas.height),
-            r, g, b, average;
+            r, g, b, average,
+            $this = $(this);
+        $this.buttonController();
 
         for (var i = 0; i < imgData.data.length; i+=4) {
             r = imgData.data[i];
@@ -391,9 +453,12 @@ $(document).ready(function(){
         img.src = canvas.toDataURL();
     }
 
+    //sepia filter
     function sepia () {
         var imgData = context.getImageData(0, 0, canvas.width, canvas.height),
-            r, g, b;
+            r, g, b,
+            $this = $(this);
+        $this.buttonController();
 
         for (var i = 0; i < imgData.data.length; i+=4) {
             r = imgData.data[i];
@@ -408,14 +473,14 @@ $(document).ready(function(){
         img.src = canvas.toDataURL();
     }
 
+    //brightness filter
     function brightness (event) {
         var $this   = $(this),
             adjusts = parseInt($this.val()),
             imgData = context.getImageData(0, 0, canvas.width, canvas.height);
 
-            console.log(adjusts);
         for (var i = 0; i < imgData.data.length; i+=4) {
-            imgData.data[i] = liveFilterBase.data[i] + adjusts;
+            imgData.data[i]   = liveFilterBase.data[i] + adjusts;
             imgData.data[i+1] = liveFilterBase.data[i+1] + adjusts;
             imgData.data[i+2] = liveFilterBase.data[i+2] + adjusts;
         }
@@ -423,20 +488,105 @@ $(document).ready(function(){
         img.src = canvas.toDataURL();
     }
 
-	function undo () {
-		var change = changes[changeIndex];
+    //contrast filter
+    function contrast (event) {
+        var $this   = $(this),
+            imgData = context.getImageData(0, 0, canvas.width, canvas.height),
+            adjusts = parseInt($this.val()),
+            factor = (259 * (adjusts + 255)) / (255 * (259 - adjusts)),
+            r, g, b;
 
-		for (var i = 0; i < change.diffs.length; i++){
-			var index = change.diffs[i][0],
-				diff  = change.diffs[i][1];
-			currentImage.data[index] = currentImage.data[index] - diff;
-		}
-		
-		context.putImageData(currentImage, 0 , 0); 
-		changeIndex--;
+        for (var i = 0; i < imgData.data.length; i+=4) {
+            r = liveFilterBase.data[i];
+            g = liveFilterBase.data[i+1];
+            b = liveFilterBase.data[i+2];
+
+            imgData.data[i]   = factor * (r - 128) + 128;
+            imgData.data[i+1] = factor * (g - 128) + 128;
+            imgData.data[i+2] = factor * (b - 128) + 128;
+        }
+        context.putImageData(imgData, 0, 0);
+        img.src = canvas.toDataURL();
+    }
+
+    //undo changes
+	function undo () {
+		var change = changes[changeIndex],
+            $this = $(this);
+        $this.buttonController();
+
 		addChange = false;
+
+		if (!change) {
+			addChange = true;
+			return console.log('undo end');
+		}
+	
+		if (change.cropped){
+			canvas.height = change.cropped.height;
+			canvas.width  = change.cropped.width;
+			context.putImageData(change.cropped, 0, 0);
+		}		
+		else if (change.rotated === 'left') {
+			drawRotated(90);
+		}
+		else if (change.rotated === 'right') {
+			drawRotated(-90);
+		}
+		else {
+			for (var i = 0; i < change.diffs.length; i++){
+				var index = change.diffs[i][0],
+					diff  = change.diffs[i][1];
+				currentImage.data[index] = currentImage.data[index] - diff;
+			}
+			context.putImageData(currentImage, 0 , 0);
+		}
+		changeIndex--;
 		img.src = canvas.toDataURL();
 	}
+
+	function redo () {
+		var change;
+		
+		change = changes[changeIndex+1];
+		addChange = false;
+		
+		if (!change) {
+			addChange = true;
+			return console.log('redo end');
+		}
+		//cropped
+		if (change.croppedRedo) {
+			canvas.height = change.croppedRedo.height;
+			canvas.width  = change.croppedRedo.width;
+			context.putImageData(change.croppedRedo, 0, 0);
+		}
+		else if (change.rotated === 'left') {
+			drawRotated(-90);
+		}	
+		else if (change.rotated === 'right') {
+			drawRotated(90);
+		}
+		//diffs
+		else {
+			for (var i = 0; i < change.diffs.length; i++){
+				var index = change.diffs[i][0];
+					diff  = change.diffs[i][1];
+				currentImage.data[index] += diff;
+			}
+			
+			context.putImageData(currentImage, 0, 0);
+		}		
+		changeIndex++;
+		img.src = canvas.toDataURL();
+	}
+
+    //button hide/show paint stuff
+    $("button#toggle-paint").click(function(){
+        $("button#paint").toggle();
+        $("input#line-size").toggle();
+        $("input#paint-color").toggle();
+    });
 
 	$.fn.buttonController = function () { //refactor with a variable that holds the last button pressed and turn it and only it off  
 		var $rectSelect    = $('button#rectangular-selector'),
@@ -494,10 +644,8 @@ $(document).ready(function(){
             if (!this.hasClass('btn-default')) {
                 this.val('ON');
                 this.removeClass('btn btn-danger').addClass('btn btn-success');
-
             }
         }
-
 		else {
 			this.val('OFF');
 			this.removeClass('btn btn-success').addClass('btn btn-danger');
