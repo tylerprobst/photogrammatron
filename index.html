@@ -31,7 +31,7 @@
                     <h3>Select File</h3>
                     <form id="add-image">
                         <div class="form-group">
-                            <input type="file" class="btn btn-default form-control" id="image-upload" name="image-upload">
+                            <input title="Choose File" type="file" class="btn btn-default form-control" id="image-upload" name="image-upload" data-toggle="tooltip" data-placement="right">
                         </div>
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="link to online image" name="image-link" />
@@ -41,7 +41,7 @@
                         </div>
                         <div id="save">
                             <input id="filename" type="text" placeholder="save file as..." />
-                    <a class="btn btn-default" id="save" name="save" download="download.png" title="save"><i class="fa fa-save"></i></a>
+                    <a title="save" class="btn btn-default" id="save" name="save" download="download.png" data-toggle="tooltip" data-placement="right"><i class="fa fa-save"></i></a>
                         </div>
                     </form>
                 </div>
@@ -53,21 +53,47 @@
                     </div>
                 </div>
                 <div id="right-panel" class="col-xs-3 well">
-                    <p><button title="Rectangular Selector" class="btn btn-danger" id="rectangular-selector" value="OFF"><i class="fa fa-pencil-square-o"></i></button></p>
-                    <p><button title="Crop" class="btn btn-default" name="crop-image"><i class="fa fa-crop"></i></button></p>
-                    <p><button title="Rotate Clockwise" class="btn btn-default" id="clockwise"><i class="fa fa-rotate-right"></i></button>
-                    <button title="Rotate Counter-Clockwise" class="btn btn-default" id="counter-clockwise"><i class="fa fa-rotate-left"></i></button></p>
-                    <p><button title="Zoom-In" class="btn btn-danger" id="zoom-in" value="OFF"><i class="fa fa-search-plus"></i></button>
-                    <button title="Zoom-Out" class="btn btn-danger" id="zoom-out" value="OFF"><i class="fa fa-search-minus"></i></button></p>
-                    <p><button title="Navigate" class="btn btn-danger" id="nav" value="OFF"><i class="fa fa-arrows"></i></button></p>
-                    <p><button title="Paint" class="btn btn-danger" id="paint" value="OFF"><i class="fa fa-paint-brush"></i></button></p>
-                    <p><button class="btn btn-default" id="text">Text</button>         
-                    <input type="text" id="text-content" value="enter text here..." /></p>
-                    <p>Font Size: <input type="text" id="font-size" value="12" /></p>
-                    <p>Font Color: <input type="color" id="font-color"></p>
-                    <p><button title="Undo" class="btn btn-default" id="undo" >Undo</button>
-                    <button title="Redo" class="btn btn-default" id="redo" >Redo</button></p>
-                    <p><button title="grayscale" class="btn btn-default" id="grayscale" >GrayScale</button></p>
+                    <p><button title="Rectangular Selector" class="btn btn-danger" id="rectangular-selector" value="OFF" data-toggle="tooltip" data-placement="right"><i class="fa fa-pencil-square-o"></i></button></p>
+                    <p><button title="Crop" class="btn btn-default" name="crop-image" data-toggle="tooltip" data-placement="right"><i class="fa fa-crop"></i></button></p>
+                    <p><button title="Rotate Clockwise" class="btn btn-default" id="clockwise" data-toggle="tooltip" data-placement="right"><i class="fa fa-rotate-right"></i></button>
+                    <button title="Rotate Counter-Clockwise" class="btn btn-default" id="counter-clockwise" data-toggle="tooltip" data-placement="right"><i class="fa fa-rotate-left"></i></button></p>
+                    <p><button title="Zoom-In" class="btn btn-danger" id="zoom-in" value="OFF" data-toggle="tooltip" data-placement="right"><i class="fa fa-search-plus"></i></button>
+                    <button title="Zoom-Out" class="btn btn-danger" id="zoom-out" value="OFF" data-toggle="tooltip" data-placement="right"><i class="fa fa-search-minus"></i></button></p>
+                    <p><button title="Navigate" class="btn btn-danger" id="nav" value="OFF" data-toggle="tooltip" data-placement="right"><i class="fa fa-arrows"></i></button></p>
+                        <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Paint
+                        <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                        <p><button title="Paint" class="btn btn-danger" id="paint" value="OFF" data-toggle="tooltip" data-placement="right"><i class="fa fa-paint-brush"></i></button></p>
+                        <p>Paint Size: <input type="text" id="line-size" value="5" /> </p>
+                        <p>Paint Color: <input type="color" id="paint-color"></p>
+                        </div>
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add Text
+                        <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                    <button title="Rectangular Selector" class="btn btn-danger" id="rectangular-selector" value="OFF"><i class="fa fa-pencil-square-o"></i></button>
+                    <button title="Add Text" class="btn btn-default" id="text" data-toggle="tooltip" data-placement="right">Text</button>         
+                    <input type="text" id="text-content" placeholder="enter text here..." /></p>
+                    <p>Text Size: <input type="text" id="text-size" value="12" /></p>
+                    <p>Text Color: <input type="color" id="text-color"></p>
+                    <p>Text Font: <select id="font-style" class="input">
+                        <option value="Arial" selected="selected">Arial</option>
+                        <option value="Courier">Courier</option>
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Verdana">Verdana</option>
+                    </select></p>
+                    </div>
+                    <p><button title="Undo" class="btn btn-default" id="undo" data-toggle="tooltip" data-placement="right">Undo</button>
+                    <button title="Redo" class="btn btn-default" id="redo" data-toggle="tooltip" data-placement="right">Redo</button></p>
+
+                    <p><button title="Grayscale" class="btn btn-default" id="grayscale" data-toggle="tooltip" data-placement="right">Grayscale</button></p>
+                    <p><button title="Sepia" class="btn btn-default" id="sepia" data-toggle="tooltip" data-placement="right">Sepia</button></p>
+                    <p><input type="range" title="Brightness" value="0" min="-100" max="100" id="brightness"></input></p>
+                    <p id="bright-text">Adjust Brightness</p>
+                    <p><input type="range" title="Contrast" value="0" min="-100" max="100" id="contrast"></input></p>
+                    <p id="contrast-text">Adjust Contrast</p>
                 </div>
             </div>
         </div>

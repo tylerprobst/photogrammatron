@@ -12,14 +12,18 @@ $(document).ready(function(){
 		lastImage,
 		currentImage,
 		imgScale, 
-		initHeight;
+		initHeight,
+        liveFilterBase,
+        fontStyle = 'Arial';
+   
+	//input. draw to canvas
+	$('input#image-upload').on('change', imgLoad);
 
-	window.canvas = canvas;
-	
-	$('input#image-upload').on('change', function (event) {
-		imgLoad(event);
-	});
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 
+    //rectangular selector
 	$('button#rectangular-selector').on('click', function (event) {    
 		var $this = $(this);
 		$this.buttonController();
@@ -54,7 +58,6 @@ $(document).ready(function(){
 		                height: height + 'px',
 		                width: width + 'px'
 		            })
-
 		        });
 
 		        $(window).one('mouseup', function (event) { 
@@ -70,7 +73,6 @@ $(document).ready(function(){
 	$('button#zoom-in').on('click', function (event) {
 		var $this = $(this);
 		$this.buttonController();
-
 
 		if ($this.val() === 'ON') {
 			$('img#image').on('click', function (event) {	
@@ -88,7 +90,6 @@ $(document).ready(function(){
 				img.width  = newW;
 			});
 		}
-
 		else {
 			$('img#image').off('click');
 		}
@@ -97,7 +98,6 @@ $(document).ready(function(){
 	$('button#zoom-out').on('click', function (event) {
 		var $this = $(this);
 		$this.buttonController();
-
 
 		if ($this.val() === 'ON') {
 			$('img#image').on('click', function (event) {	
@@ -120,11 +120,8 @@ $(document).ready(function(){
 				
 				img.height = newH;
 				img.width  = newW;
-				//use jquery to get the workspace, use offset to get top and left and get height and width then depending on where you
-				//click to zoom in or out use that info to recenter the image.
 			});
 		}
-
 		else {
 			$('img#image').off('click');
 		};
@@ -162,7 +159,6 @@ $(document).ready(function(){
 				});
 			});
 		}
-
 		else {
 			$('div#image-wrapper').off('mousedown');
 		}
@@ -175,7 +171,9 @@ $(document).ready(function(){
             position   = $selection.position(),
             height     = $selection.height()/imgScale,
             width      = $selection.width()/imgScale,
-            imgData    = context.getImageData(position.left/imgScale, position.top/imgScale, width, height);
+            imgData    = context.getImageData(position.left/imgScale, position.top/imgScale, width, height),
+            $this = $(this);
+        $this.buttonController();
 
         canvas.height = height;
         canvas.width  = width;
@@ -191,35 +189,50 @@ $(document).ready(function(){
 
     //rotate clockwise
     $('button#clockwise').on('click', function (event) {
-    	var angleInDegrees = 0;
-    	// this.buttonController();
+        var angleInDegrees = 0,
+            $this = $(this);
+
+        $this.buttonController();
+
     	angleInDegrees = (angleInDegrees + 90) % 360;
     	drawRotated(angleInDegrees);
-    	clockwise = true;
+        clockwise = true;
     });
 
     //rotate counter clockwise
     $('button#counter-clockwise').on('click', function (event) {
-    	var angleInDegrees = 0;
-    	// this.buttonController();
+    	var angleInDegrees = 0,
+            $this = $(this);
+
+        $this.buttonController();
+
     	angleInDegrees = (angleInDegrees - 90) % 360;
     	drawRotated(angleInDegrees);
     	counterClockwise = true;
     });
 
+    //write text
 	 $('button#text').on('click', function (event) {
-	    	var position     = $('#selection').position(),
-	    		text         = $('#text-content').val(),
-	    		fontSize     = $('#font-size').val(),
-	    		fontColor    = $('#font-color').val();
+    	var position  = $('#selection').position(),
+    		text      = $('#text-content').val(),
+    		textSize  = $('#text-size').val(),
+    		textColor = $('#text-color').val(),
+            $this     = $(this);
 
-	    	context.fillStyle = fontColor;
-	    	context.font = fontSize + "px sans-serif";
-	    	context.textBaseline = 'top';
-	    	context.fillText(text, position.left / imgScale, position.top / imgScale);
-	    	img.src = canvas.toDataURL();
-			
-	 });
+        $this.buttonController();
+
+    	context.fillStyle = textColor;
+    	context.font = textSize + "px " + fontStyle;
+    	context.textBaseline = 'top';
+    	context.fillText(text, position.left / imgScale, position.top / imgScale);
+    	img.src = canvas.toDataURL();		
+	});
+
+    //change fonts for text
+    $('select#font-style').on('change', function (event) {
+        fontStyle = $('input#text-content')[0].style.fontFamily = event.currentTarget.value;
+    });
+
     //canvas layer for painting
     $('button#paint').on('click', function (event) {
         var $paintLayer  = $('<canvas id="paint-layer" style="z-index 2"></canvas>'),
@@ -256,24 +269,30 @@ $(document).ready(function(){
             });
 
             $(window).on('mouseup', function (event) {
-                paint = false;
 
+                paint = false;
                 reDraw(coords, context, imgScale);
+                coords = [];
                 img.src = canvas.toDataURL();
             });
         }
     });
 
 	$('button#undo').on('click', undo);
-	$('button#redo').on('click', redo);
-
-	$('button#grayscale').on('click', grayscale);
+    $('button#redo').on('click', redo);
+    $('button#grayscale').on('click', grayscale);
+    $('button#sepia').on('click', sepia);
+    $('input#brightness').on('mouseup', brightness);
+    $('input#contrast').on('mouseup', contrast);
 
     function reDraw (coords, ctx, scale) {
-        ctx.strokeStyle = "#000";
+        var paintColor = $('#paint-color').val();
+            lineSize  = $('#line-size').val();
+
+        ctx.strokeStyle = paintColor;
         ctx.lineJoin    = "round";
         scale           = scale || 1;
-        ctx.lineWidth   = 5 / scale;
+        ctx.lineWidth   = lineSize / scale;
 
         for (var i = 0; i < coords.length; i++) {
             ctx.beginPath();
@@ -339,6 +358,7 @@ $(document).ready(function(){
             canvas.height = this.height;
             canvas.width  = this.width;
             context.drawImage(img, 0, 0, this.width, this.height);
+            liveFilterBase = context.getImageData(0, 0, canvas.width, canvas.height);
             updateImage.call(this);
             this.onload = updateImage;
     	};
@@ -371,7 +391,6 @@ $(document).ready(function(){
 
 	function makeChange () {
 		var change 		 = {};
-
 		currentImage = context.getImageData(0, 0, canvas.width, canvas.height);
 		
 		if (!lastImage) return;
@@ -413,9 +432,89 @@ $(document).ready(function(){
 		changeIndex = changeIndex + 1 || 0;
 	}
 
+    //grayscale filter
+    function grayscale () {
+        var imgData = context.getImageData(0, 0, canvas.width, canvas.height),
+            r, g, b, average,
+            $this = $(this);
+        $this.buttonController();
+
+        for (var i = 0; i < imgData.data.length; i+=4) {
+            r = imgData.data[i];
+            g = imgData.data[i+1];
+            b = imgData.data[i+2];
+            average = (r + g + b) / 3;
+
+            imgData.data[i]   = average;
+            imgData.data[i+1] = average;
+            imgData.data[i+2] = average;
+        }
+        context.putImageData(imgData, 0, 0);
+        img.src = canvas.toDataURL();
+    }
+
+    //sepia filter
+    function sepia () {
+        var imgData = context.getImageData(0, 0, canvas.width, canvas.height),
+            r, g, b,
+            $this = $(this);
+        $this.buttonController();
+
+        for (var i = 0; i < imgData.data.length; i+=4) {
+            r = imgData.data[i];
+            g = imgData.data[i+1];
+            b = imgData.data[i+2];
+
+            imgData.data[i]   = (r * 0.393)+(g * 0.769)+(b * 0.189);
+            imgData.data[i+1] = (r * 0.349)+(g * 0.686)+(b * 0.168);
+            imgData.data[i+2] = (r * 0.272)+(g * 0.534)+(b * 0.131);
+        }
+        context.putImageData(imgData, 0, 0);
+        img.src = canvas.toDataURL();
+    }
+
+    //brightness filter
+    function brightness (event) {
+        var $this   = $(this),
+            adjusts = parseInt($this.val()),
+            imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+        for (var i = 0; i < imgData.data.length; i+=4) {
+            imgData.data[i]   = liveFilterBase.data[i] + adjusts;
+            imgData.data[i+1] = liveFilterBase.data[i+1] + adjusts;
+            imgData.data[i+2] = liveFilterBase.data[i+2] + adjusts;
+        }
+        context.putImageData(imgData, 0, 0);
+        img.src = canvas.toDataURL();
+    }
+
+    //contrast filter
+    function contrast (event) {
+        var $this   = $(this),
+            imgData = context.getImageData(0, 0, canvas.width, canvas.height),
+            adjusts = parseInt($this.val()),
+            factor = (259 * (adjusts + 255)) / (255 * (259 - adjusts)),
+            r, g, b;
+
+        for (var i = 0; i < imgData.data.length; i+=4) {
+            r = liveFilterBase.data[i];
+            g = liveFilterBase.data[i+1];
+            b = liveFilterBase.data[i+2];
+
+            imgData.data[i]   = factor * (r - 128) + 128;
+            imgData.data[i+1] = factor * (g - 128) + 128;
+            imgData.data[i+2] = factor * (b - 128) + 128;
+        }
+        context.putImageData(imgData, 0, 0);
+        img.src = canvas.toDataURL();
+    }
+
+    //undo changes
 	function undo () {
-		var change = changes[changeIndex];
-	
+		var change = changes[changeIndex],
+            $this = $(this);
+        $this.buttonController();
+
 		addChange = false;
 
 		if (!change) {
@@ -427,27 +526,21 @@ $(document).ready(function(){
 			canvas.height = change.cropped.height;
 			canvas.width  = change.cropped.width;
 			context.putImageData(change.cropped, 0, 0);
-		}
-		
+		}		
 		else if (change.rotated === 'left') {
 			drawRotated(90);
 		}
-		
 		else if (change.rotated === 'right') {
 			drawRotated(-90);
 		}
-
 		else {
 			for (var i = 0; i < change.diffs.length; i++){
 				var index = change.diffs[i][0],
 					diff  = change.diffs[i][1];
 				currentImage.data[index] = currentImage.data[index] - diff;
 			}
-
 			context.putImageData(currentImage, 0 , 0);
 		}
-
-		
 		changeIndex--;
 		img.src = canvas.toDataURL();
 	}
@@ -468,11 +561,9 @@ $(document).ready(function(){
 			canvas.width  = change.croppedRedo.width;
 			context.putImageData(change.croppedRedo, 0, 0);
 		}
-
 		else if (change.rotated === 'left') {
 			drawRotated(-90);
-		}
-		
+		}	
 		else if (change.rotated === 'right') {
 			drawRotated(90);
 		}
@@ -485,22 +576,34 @@ $(document).ready(function(){
 			}
 			
 			context.putImageData(currentImage, 0, 0);
-		}	
-
-		
+		}		
 		changeIndex++;
 		img.src = canvas.toDataURL();
 	}
 
-	$.fn.buttonController = function () { //refactor with a variable that holds the last button pressed and turn it and only it off  
-		var $rectSelect = $('button#rectangular-selector'),
-			$zoomIn     = $('button#zoom-in'),
-			$zoomOut    = $('button#zoom-out'),
-			$nav        = $('button#nav'),
-			$paint  	= $('button#paint');	
+    //button hide/show paint stuff
+    $("button#toggle-paint").click(function(){
+        $("button#paint").toggle();
+        $("input#line-size").toggle();
+        $("input#paint-color").toggle();
+    });
 
-		if (this.val() === 'OFF') {
-			
+	$.fn.buttonController = function () { //refactor with a variable that holds the last button pressed and turn it and only it off  
+		var $rectSelect    = $('button#rectangular-selector'),
+			$zoomIn        = $('button#zoom-in'),
+			$zoomOut       = $('button#zoom-out'),
+			$nav           = $('button#nav'),
+			$paint  	   = $('button#paint'),
+            $rotateClock   = $('button#clockwise'),
+            $rotateCounter = $('button#counter-clockwise'),
+            $crop          = $('button[name="crop-image"]'),
+            $undo          = $('button#undo'),
+            $grayscale     = $('button#grayscale'),
+            $sepia         = $('button#sepia'),
+            $text          = $('button#text');
+
+		if (this.val() === 'OFF' || this.hasClass('btn-default')) {
+
 			$rectSelect.val('OFF');
 			$rectSelect.removeClass('btn btn-success').addClass('btn btn-danger');
 			$('div#image-wrapper').off('mousedown');
@@ -524,13 +627,29 @@ $(document).ready(function(){
             $('canvas#paint-layer').off('mousemove');
             $('canvas#paint-layer').remove();
 
-			this.val('ON');
-			this.removeClass('btn btn-danger').addClass('btn btn-success');
-		}
+            $rotateClock.val('OFF');
+
+            $rotateCounter.val('OFF');
+
+            $crop.val('OFF');
+
+            $undo.val('OFF');
+
+            $grayscale.val('OFF');
+
+            $sepia.val('OFF');
+
+            $text.val('OFF');
+
+            if (!this.hasClass('btn-default')) {
+                this.val('ON');
+                this.removeClass('btn btn-danger').addClass('btn btn-success');
+            }
+        }
 		else {
 			this.val('OFF');
 			this.removeClass('btn btn-success').addClass('btn btn-danger');
-			$('canvas#paint-layer').remove();
+            $('canvas#paint-layer').remove();
 		}
 	}
 });
