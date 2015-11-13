@@ -4,8 +4,9 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
 
 #image-workspace {
     border	: 1px solid black;
-    height	: 650px;
-    width 	: 600px;
+    margin  : auto;
+    height	: 750px;
+    width 	: 700px;
     overflow: hidden;
     position: relative;
     background-color: white;
@@ -17,6 +18,10 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
 
 .navbar {
     margin-bottom: 0px;
+}
+
+.navbar.li {
+    display: inline;
 }
 
 #paint-layer {
@@ -34,24 +39,49 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
     position: absolute;
 }
 
-#bright-text {
-    text-align: center;
-}
-
-#contrast-text {
-    text-align: center;
-}
-
 .btn {
+    background: #800000;
+    color: white;
+    border: none;
     border-radius: 24px;
     box-shadow: 0 3px 0 0;
+    text-shadow: none;
+}
+.btn:hover, .btn:focus {
+  background: #8FBC8F;
+  color: black;
+}
+.btn:active {
+  background: #8FBC8F;
+  color: black;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.collapse {
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 10px;
 }
 
 input {
     border-radius: 20px;
-}
-
-
-#left-panel {
-    background-color: green;
 }
