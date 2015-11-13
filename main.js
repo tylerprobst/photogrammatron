@@ -89,6 +89,9 @@ $(document).ready(function(){
 				imgScale = newH/initHeight;
 				event.preventDefault();
 
+				// imgWrapper.style.top  = (mouseY * (resize / 100)) - (newH / 2) / 2 + 'px';
+				// imgWrapper.style.left  = (mouseX * (resize / 100)) - (newW / 2) / 2 + 'px';
+
 				img.height = newH;
 				img.width  = newW;
 			});
@@ -110,7 +113,6 @@ $(document).ready(function(){
 					mouseY = event.pageY,
 					newH   = img.height * resize,
 					newW   = img.width * resize,
-					imgDiv = img.parentNode,
 					imgLeft = mouseX * .09,
 					imgTop  = mouseY * .09;
 
@@ -118,9 +120,6 @@ $(document).ready(function(){
 
 				imgScale = newH/initHeight;
 
-				// imgWrapper.style.top  = (img.height - newH)/2 + 'px';
-				// imgWrapper.style.left  = (img.width - newW)/2 + 'px';
-				
 				img.height = newH;
 				img.width  = newW;
 			});
@@ -358,6 +357,7 @@ $(document).ready(function(){
     	img.removeAttribute('width');
     	
     	imgScale = 1.00;
+
 
     	img.onload = function() {
             var MAX_WIDTH  = 1000,
