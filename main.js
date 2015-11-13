@@ -1,11 +1,12 @@
 $(document).ready(function(){
 	var canvas      = document.createElement('canvas'),
         context     = canvas.getContext('2d'),
-		img         = $('img#image')[0],
-		imgWrapper  = $('div#image-wrapper')[0],
+		img         = $('#image')[0],
+		imgWrapper  = $('#image-wrapper')[0],
 		changes     = [],
 		addChange   = true,
 		cropped     = false,
+        fontStyle = 'Arial',
 		changeIndex,
 		clockwise,
 		counterClockwise,
@@ -13,31 +14,32 @@ $(document).ready(function(){
 		currentImage,
 		imgScale, 
 		initHeight,
-        liveFilterBase,
-        fontStyle = 'Arial';
+        liveFilterBase;
+    window.canvas = canvas;
+    window.context = context;
    
-	//input. draw to canvas
-	$('input#image-upload').on('change', imgLoad);
+	//load the image to canvas
+	$('#image-upload').on('change', imgLoad);
 
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
 
     //rectangular selector
-	$('button#rectangular-selector').on('click', function (event) {    
+	$('#rectangular-selector').on('click', function (event) {    
 		var $this = $(this);
 		$this.buttonController();
 
 		if($this.val() === 'ON') {
-		    $('div#image-wrapper').on('mousedown', function (event) {
+		    $('#image-wrapper').on('mousedown', function (event) {
 		        var startTop  = event.pageY,
 		            startLeft = event.pageX,
 		            $box      = $('<div id="selection"></div>'),
-		            $wrapper  = $('div#image-wrapper'),
+		            $wrapper  = $('#image-wrapper'),
 		            offset    = $wrapper.offset(); 
 
 		        $('#selection').remove();
-		        $('div#image-wrapper').append($box);
+		        $('#image-wrapper').append($box);
 
 		        $(window).on('mousemove', function (event) {
 		            var top    = startTop,
@@ -66,16 +68,17 @@ $(document).ready(function(){
 	   		 });
 		}
 		else {
-			$('div#image-wrapper').off('mousedown');
+			$('#image-wrapper').off('mousedown');
 		}
 	});
 
-	$('button#zoom-in').on('click', function (event) {
+    //zoom-in
+	$('#zoom-in').on('click', function (event) {
 		var $this = $(this);
 		$this.buttonController();
 
 		if ($this.val() === 'ON') {
-			$('img#image').on('click', function (event) {	
+			$('#image').on('click', function (event) {	
 				var resize   = 1.1,
 					mouseX   = event.pageX,
 					mouseY   = event.pageY,
@@ -91,16 +94,17 @@ $(document).ready(function(){
 			});
 		}
 		else {
-			$('img#image').off('click');
+			$('#image').off('click');
 		}
 	});
 
-	$('button#zoom-out').on('click', function (event) {
+    // zoom-out
+	$('#zoom-out').on('click', function (event) {
 		var $this = $(this);
 		$this.buttonController();
 
 		if ($this.val() === 'ON') {
-			$('img#image').on('click', function (event) {	
+			$('#image').on('click', function (event) {	
 				var resize = 0.9,
 					mouseX = event.pageX,
 					mouseY = event.pageY,
@@ -110,30 +114,29 @@ $(document).ready(function(){
 					imgLeft = mouseX * .09,
 					imgTop  = mouseY * .09;
 
-
 				event.preventDefault();
 
 				imgScale = newH/initHeight;
 
-				imgWrapper.style.top  = (img.height - newH)/2 + 'px';
-				imgWrapper.style.left  = (img.width - newW)/2 + 'px';
+				// imgWrapper.style.top  = (img.height - newH)/2 + 'px';
+				// imgWrapper.style.left  = (img.width - newW)/2 + 'px';
 				
 				img.height = newH;
 				img.width  = newW;
 			});
 		}
 		else {
-			$('img#image').off('click');
+			$('#image').off('click');
 		};
 	});
 
 	//nav around image 
-	$('button#nav').on('click', function (event) {
+	$('#nav').on('click', function (event) {
 		var $this = $(this);
 		$this.buttonController();
 
 		if ($this.val() === 'ON'){
-			$('div#image-wrapper').on('mousedown', function (event) {
+			$('#image-wrapper').on('mousedown', function (event) {
 				var startX  = event.pageX,
 					startY  = event.pageY;
 					imgLeft = imgWrapper.offsetLeft,
@@ -160,9 +163,8 @@ $(document).ready(function(){
 			});
 		}
 		else {
-			$('div#image-wrapper').off('mousedown');
+			$('#image-wrapper').off('mousedown');
 		}
-
 	});
 
     //crop
@@ -188,7 +190,7 @@ $(document).ready(function(){
     });
 
     //rotate clockwise
-    $('button#clockwise').on('click', function (event) {
+    $('#clockwise').on('click', function (event) {
         var angleInDegrees = 0,
             $this = $(this);
 
@@ -200,7 +202,7 @@ $(document).ready(function(){
     });
 
     //rotate counter clockwise
-    $('button#counter-clockwise').on('click', function (event) {
+    $('#counter-clockwise').on('click', function (event) {
     	var angleInDegrees = 0,
             $this = $(this);
 
@@ -212,7 +214,7 @@ $(document).ready(function(){
     });
 
     //write text
-	 $('button#text').on('click', function (event) {
+	 $('#text').on('click', function (event) {
     	var position  = $('#selection').position(),
     		text      = $('#text-content').val(),
     		textSize  = $('#text-size').val(),
@@ -229,15 +231,15 @@ $(document).ready(function(){
 	});
 
     //change fonts for text
-    $('select#font-style').on('change', function (event) {
-        fontStyle = $('input#text-content')[0].style.fontFamily = event.currentTarget.value;
+    $('#font-style').on('change', function (event) {
+        fontStyle = $('#text-content')[0].style.fontFamily = event.currentTarget.value;
     });
 
     //canvas layer for painting
-    $('button#paint').on('click', function (event) {
+    $('#paint').on('click', function (event) {
         var $paintLayer  = $('<canvas id="paint-layer" style="z-index 2"></canvas>'),
             $this        = $(this),
-            $wrapper     = $('div#image-wrapper'),
+            $wrapper     = $('#image-wrapper'),
             offset       = $wrapper.offset(),
             coords       = [],
             paintCanvas  = $paintLayer[0],
@@ -249,7 +251,7 @@ $(document).ready(function(){
         $wrapper.append($paintLayer);
 
         if($this.val() === 'ON') {
-            $('canvas#paint-layer').on('mousedown', function (event) {
+            $('#paint-layer').on('mousedown', function (event) {
                 var x = event.pageX - offset.left,
                     y = event.pageY - offset.top;
 
@@ -278,12 +280,17 @@ $(document).ready(function(){
         }
     });
 
-	$('button#undo').on('click', undo);
-    $('button#redo').on('click', redo);
-    $('button#grayscale').on('click', grayscale);
-    $('button#sepia').on('click', sepia);
-    $('input#brightness').on('mouseup', brightness);
-    $('input#contrast').on('mouseup', contrast);
+	$('#undo').on('click', undo);
+    $('#redo').on('click', redo);
+    $('#grayscale').on('click', grayscale);
+    $('#sepia').on('click', sepia);
+    $('#bright-dropdown, #contrast-dropdown').on('click', saveLiveFilterBase);
+    $('#brightness').on('mouseup', brightness);
+    $('#contrast').on('mouseup', contrast);
+
+    $('#apply-bright, #apply-contrast').on('click', function (event) {
+        $(this.closest('div')).find('input').val(0);
+    })
 
     function reDraw (coords, ctx, scale) {
         var paintColor = $('#paint-color').val();
@@ -317,8 +324,7 @@ $(document).ready(function(){
     	
     	if (degrees > 0) {
     	 context.translate(canvas.width, 0);
-    	}
-    	
+    	} 	
     	else {
     	context.translate(0, canvas.height);
     	}
@@ -329,11 +335,11 @@ $(document).ready(function(){
     	img.src = canvas.toDataURL();   	
     }
 
-    function changeCanvasCallback (canvas, context) { //make undo/redo happen here
+    function changeCanvasCallback (canvas, context) {
 		var href = canvas.toDataURL('image/png');
-		$('a#save').prop('href', href);
+		$('#save').prop('href', href);
 		$('#filename').on('change', function (event) {
-			$('a#save').prop('download', $('#filename').val());
+			$('#save').prop('download', $('#filename').val());
 		});
 		lastImage = currentImage;
         currentImage = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -346,7 +352,7 @@ $(document).ready(function(){
 	}
 
 	function imgLoad (event) {
-		if(event) img.src = URL.createObjectURL(event.target.files[0]);
+		if (event) img.src = URL.createObjectURL(event.target.files[0]);
     	
     	img.removeAttribute('height');
     	img.removeAttribute('width');
@@ -354,19 +360,44 @@ $(document).ready(function(){
     	imgScale = 1.00;
 
     	img.onload = function() {
-            initHeight    = this.height;
-            canvas.height = this.height;
-            canvas.width  = this.width;
-            context.drawImage(img, 0, 0, this.width, this.height);
+            var MAX_WIDTH  = 1000,
+                MAX_HEIGHT = 1000,
+                width      = this.width,
+                height     = this.height,
+                tooBig     = false;
+
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width  = MAX_WIDTH;
+                    tooBig = true;
+                }
+            } 
+            else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                    tooBig = true;
+                }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            initHeight    = height;
+            context.drawImage(img, 0, 0, width, height);
             liveFilterBase = context.getImageData(0, 0, canvas.width, canvas.height);
             updateImage.call(this);
             this.onload = updateImage;
+
+            if (tooBig) {
+                img.src = canvas.toDataURL();
+            }
     	};
 
         function updateImage () {
             changeCanvasCallback(canvas, context);
             this.height = canvas.height * imgScale;
             this.width  = canvas.width * imgScale;
+            $('#selection').remove();
         }
 	}
 
@@ -396,7 +427,6 @@ $(document).ready(function(){
 		if (!lastImage) return;
 	
 		//cropped
-
 		if (cropped) {
 			change.cropped = lastImage;
 			change.croppedRedo = currentImage;
@@ -509,6 +539,10 @@ $(document).ready(function(){
         img.src = canvas.toDataURL();
     }
 
+    function saveLiveFilterBase () {
+        liveFilterBase = context.getImageData(0, 0, canvas.width, canvas.height);
+    }
+
     //undo changes
 	function undo () {
 		var change = changes[changeIndex],
@@ -521,7 +555,7 @@ $(document).ready(function(){
 			addChange = true;
 			return console.log('undo end');
 		}
-	
+
 		if (change.cropped){
 			canvas.height = change.cropped.height;
 			canvas.width  = change.cropped.width;
@@ -581,51 +615,50 @@ $(document).ready(function(){
 		img.src = canvas.toDataURL();
 	}
 
-    //button hide/show paint stuff
-    $("button#toggle-paint").click(function(){
-        $("button#paint").toggle();
-        $("input#line-size").toggle();
-        $("input#paint-color").toggle();
-    });
-
-	$.fn.buttonController = function () { //refactor with a variable that holds the last button pressed and turn it and only it off  
-		var $rectSelect    = $('button#rectangular-selector'),
-			$zoomIn        = $('button#zoom-in'),
-			$zoomOut       = $('button#zoom-out'),
-			$nav           = $('button#nav'),
-			$paint  	   = $('button#paint'),
-            $rotateClock   = $('button#clockwise'),
-            $rotateCounter = $('button#counter-clockwise'),
+    // turns buttons on/off
+	$.fn.buttonController = function () {
+        var $rectSelect    = $('#rectangular-selector'),
+			$zoomIn        = $('#zoom-in'),
+			$zoomOut       = $('#zoom-out'),
+			$nav           = $('#nav'),
+			$paint  	   = $('#paint'),
+            $rotateClock   = $('#clockwise'),
+            $rotateCounter = $('#counter-clockwise'),
             $crop          = $('button[name="crop-image"]'),
-            $undo          = $('button#undo'),
-            $grayscale     = $('button#grayscale'),
-            $sepia         = $('button#sepia'),
-            $text          = $('button#text');
+            $undo          = $('#undo'),
+            $grayscale     = $('#grayscale'),
+            $sepia         = $('#sepia'),
+            $text          = $('#text'),
+            $redo          = $('#redo'),
+            $brightDrop    = $('#bright-dropdown'),
+            $contrastDrop  = $('#contrast-dropdown'),
+            $applyBright   = $('#apply-bright'),
+            $applyContrast = $('#apply-contrast');
 
 		if (this.val() === 'OFF' || this.hasClass('btn-default')) {
 
 			$rectSelect.val('OFF');
-			$rectSelect.removeClass('btn btn-success').addClass('btn btn-danger');
-			$('div#image-wrapper').off('mousedown');
+			$rectSelect.removeClass('btn-success').addClass('btn-danger');
+			$('#image-wrapper').off('mousedown');
 
 			$zoomIn.val('OFF');
-			$zoomIn.removeClass('btn btn-success').addClass('btn btn-danger');
-			$('img#image').off('click');
+			$zoomIn.removeClass('btn-success').addClass('btn-danger');
+			$('#image').off('click');
 
 			$zoomOut.val('OFF');
-			$zoomOut.removeClass('btn btn-success').addClass('btn btn-danger');
-			$('img#image').off('click');
+			$zoomOut.removeClass('btn-success').addClass('btn-danger');
+			$('#image').off('click');
 
 			$nav.val('OFF');
-			$nav.removeClass('btn btn-success').addClass('btn btn-danger');
-			$('div#image-wrapper').off('mousedown');
+			$nav.removeClass('btn-success').addClass('btn-danger');
+			$('#image-wrapper').off('mousedown');
 
             $paint.val('OFF');
-            $paint.removeClass('btn btn-success').addClass('btn btn-danger');
-            $('img#image').off('click');
-            $('canvas#paint-layer').off('mousedown');
-            $('canvas#paint-layer').off('mousemove');
-            $('canvas#paint-layer').remove();
+            $paint.removeClass('btn-success').addClass('btn-danger');
+            $('#image').off('click');
+            $('#paint-layer').off('mousedown');
+            $('#paint-layer').off('mousemove');
+            $('#paint-layer').remove();
 
             $rotateClock.val('OFF');
 
@@ -635,21 +668,33 @@ $(document).ready(function(){
 
             $undo.val('OFF');
 
+            $redo.val('OFF');
+
             $grayscale.val('OFF');
 
             $sepia.val('OFF');
 
             $text.val('OFF');
 
+            $brightDrop.val('OFF');
+
+            $contrastDrop.val('OFF');
+
+            $applyBright.val('OFF');
+
+            $applyContrast.val('OFF');
+
             if (!this.hasClass('btn-default')) {
                 this.val('ON');
-                this.removeClass('btn btn-danger').addClass('btn btn-success');
+                this.removeClass('btn-danger').addClass('btn-success');
             }
         }
 		else {
 			this.val('OFF');
-			this.removeClass('btn btn-success').addClass('btn btn-danger');
-            $('canvas#paint-layer').remove();
+			this.removeClass('btn-success').addClass('btn-danger');
+            $('#paint-layer').remove();
 		}
 	}
 });
+
+
