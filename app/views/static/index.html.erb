@@ -5,6 +5,11 @@
             Photogrammatron
             </a>
         </div>
+        <div class="nav navbar-nav navbar-right" style="padding: 10px 10px 10px 10px">
+            <%= form_tag uploads_path, id: 'upload-form', enctype: 'multipart/form-data' do %>
+                <%= submit_tag 'Upload Photo to Facebook' %>
+            <% end %>
+        </div>
         <div class="nav navbar-nav navbar-right" style="padding: 15px 10px 10px 10px">
         <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
             </fb:login-button>
@@ -36,7 +41,7 @@
         </div>
         <div id="right-panel" class="col-xs-3 well">
             <p><button title="Rectangular Selector" class="btn btn-danger" id="rectangular-selector" value="OFF" data-toggle="tooltip" data-placement="right"><i class="fa fa-pencil-square-o"></i></button></p>
-            <p><button title="Crop" class="btn btn-default btn-yellow" name="crop-image" data-toggle="tooltip" data-placement="right"><i class="fa fa-crop"></i></button></p>
+            <p><button title="Crop" class="btn btn-default btn-yellow" id="crop-image" data-toggle="tooltip" data-placement="right"><i class="fa fa-crop"></i></button></p>
             <p><button title="Rotate Clockwise" class="btn btn-default" id="clockwise" data-toggle="tooltip" data-placement="left"><i class="fa fa-rotate-right"></i></button>
             <button title="Rotate Counter-Clockwise" class="btn btn-default" id="counter-clockwise" data-toggle="tooltip" data-placement="right"><i class="fa fa-rotate-left"></i></button></p>
             <p><button title="Zoom-In" class="btn btn-danger" id="zoom-in" value="OFF" data-toggle="tooltip" data-placement="left"><i class="fa fa-search-plus"></i></button>
