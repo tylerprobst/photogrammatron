@@ -1,0 +1,36 @@
+
+
+Kids geocahing:
+
+hot wheel hunting
+
+bot hunting
+
+hex bug hunt
+
+QR codes with info for animals/rocks/plants in that habitat. Sends to profile, get points for how many found, etc.
+
+s3 for rails... find it, read it. (Tyler).
+
+***research deploying to Heroku...
+
+go-fish (event driven)
+
+social?? or... Oauth as flask module. 
+
+craigslist site
+
+chess
+
+individual final project... should include API integration.
+
+MVP for WeDopt more DB work... Flask or Rails.
+
+front-end framework... Backbone... pretty up social ??
+
+
+python on AWS
+
+photogrammatron on Heroku
+
+cahnge facebook logged in text color, style. get rid of login button unless logged-in

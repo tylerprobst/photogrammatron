@@ -6,7 +6,7 @@ $(document).ready(function(){
 		changes     = [],
 		addChange   = true,
 		cropped     = false,
-        fontStyle = 'Arial',
+        fontStyle   = 'Arial',
 		changeIndex,
 		clockwise,
 		counterClockwise,
@@ -428,6 +428,19 @@ $(document).ready(function(){
             $('#selection').remove();
         }
 	}
+
+    function dataUrltoBlob (dataUrl) {
+        var arr        = dataUrl.split(,), 
+            mime       = arr[0].match(/:(.*?:/)[1], 
+            byteString = atob(arr[1]),
+            n          = byteString.length,
+            u8Array    = new Uint8Array(n);
+
+        while (n--) {
+            u8Array[n] = byteString.charCodeAt(n);
+        }
+        return new Blob([u8Array], {type:mime});
+    }
 
 	function grayscale () {
 		var imgData = context.getImageData(0, 0, canvas.width, canvas.height),

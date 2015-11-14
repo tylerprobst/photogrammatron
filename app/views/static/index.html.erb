@@ -11,6 +11,10 @@
             <% end %>
         </div>
         <div class="nav navbar-nav navbar-right" style="padding: 15px 10px 10px 10px">
+            <%= form_tag uploads_path, id:'upload-form', enctype: 'multipart/form-data' do %>
+                <%= submit_tag 'Upload photo to Facebook' %>
+            <% end %>
+        <div class="nav navbar-nav navbar-right" style="padding: 15px 10px 10px 10px">
         <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
             </fb:login-button>
             <div id="status">
