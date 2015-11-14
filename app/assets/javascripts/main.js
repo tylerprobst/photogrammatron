@@ -431,7 +431,7 @@ $(document).ready(function(){
 
     function dataUrltoBlob (dataUrl) {
         var arr        = dataUrl.split(','), 
-            mime       = arr[0].match(/:(.*?:/)[1], 
+            mime       = arr[0].match(/:(.*?);/)[1], 
             byteString = atob(arr[1]),
             n          = byteString.length,
             u8Array    = new Uint8Array(n);
