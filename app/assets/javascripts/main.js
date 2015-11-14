@@ -15,11 +15,39 @@ $(document).ready(function(){
 		imgScale, 
 		initHeight,
         liveFilterBase;
+
     window.canvas = canvas;
     window.context = context;
    
 	//load the image to canvas
 	$('#image-upload').on('change', imgLoad);
+
+    $('#upload-form').on('submit', function (event) {
+        var formData = new FormData(),
+            blob, 
+            dataUrl;
+
+        event.preventDefault();
+        dataUrl = canvas.toDataURL();
+        blob    = dataUrltoBlob(dataUrl); // turns data url into blob, then use ajax to upload
+        formData.append('file', blob);
+        $.ajax({
+            type: 'POST',
+            url : '/uploads',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (response, status, XHR) {
+                console.log(response.url);
+                FB.ui({
+                    method: 'feed',
+                    picture: response.url,
+                }, function(response){});
+            },
+            error: function () {console.log(arguments)}
+        });
+    });
 
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
@@ -167,7 +195,7 @@ $(document).ready(function(){
 	});
 
     //crop
-    $('button[name="crop-image"]').on('click', function (event) {
+    $('#crop-image').on('click', function (event) {
         var $selection = $('#selection'),
             position   = $selection.position(),
             height     = $selection.height()/imgScale,
@@ -615,6 +643,20 @@ $(document).ready(function(){
 		img.src = canvas.toDataURL();
 	}
 
+
+    function dataUrltoBlob (dataUrl) {
+        var arr        = dataUrl.split(','),
+            mime       = arr[0].match(/:(.*?);/)[1],
+            byteString = atob(arr[1]),
+            n          = byteString.length,
+            u8Array    = new Uint8Array(n);
+
+        while (n--) {
+            u8Array[n] = byteString.charCodeAt(n);
+        }        
+        return new Blob([u8Array], {type:mime});
+    }
+
     // turns buttons on/off
 	$.fn.buttonController = function () {
         var $rectSelect    = $('#rectangular-selector'),
@@ -624,7 +666,7 @@ $(document).ready(function(){
 			$paint  	   = $('#paint'),
             $rotateClock   = $('#clockwise'),
             $rotateCounter = $('#counter-clockwise'),
-            $crop          = $('button[name="crop-image"]'),
+            $crop          = $('#crop-image'),
             $undo          = $('#undo'),
             $grayscale     = $('#grayscale'),
             $sepia         = $('#sepia'),
