@@ -28,7 +28,7 @@ $(document).ready(function(){
             dataUrl;
 
         event.preventDefault();
-        dataUrl = canvas.toDataURL();
+        dataUrl = canvas.toDataURL('image/jpeg', 1);
         blob    = dataUrltoBlob(dataUrl); // turns data url into blob, then use ajax to upload
         formData.append('file', blob);
         $.ajax({
@@ -39,12 +39,29 @@ $(document).ready(function(){
             contentType: false,
             processData: false,
             success: function (response, status, XHR) {
-                console.log(response.url);
-                FB.ui({
-                    method: 'feed',
-                    picture: response.url,
-                }, function(response){});
-            },
+                var post = {
+                    message      : 'post Message', //must be competely user generated
+                    access_token : accessToken,
+                    url          : response.url
+                };
+                
+                FB.login(function () {
+                    FB.api('/me/photos', 'post', post, function (response, post) {
+                        if (!response || response.error) {
+                            console.log(response.error);
+                            alert('Posting error occured');
+                        }
+                        else {
+                            alert('Success - Post ID: ' + response.id);
+                        }
+                })}, {scope : 'publish_actions' });
+            },    
+            //     FB.ui({
+            //         method : 'feed',
+            //         link   : response.url,
+            //         picture: URLToPicture(),
+            //     }, function(response){});
+            // },
             error: function () {console.log(arguments)}
         });
     });
