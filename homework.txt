@@ -33,4 +33,28 @@ python on AWS
 
 photogrammatron on Heroku
 
-cahnge facebook logged in text color, style. get rid of login button unless logged-in
+cahnge facebook logged in text color, style. get rid of login button unless logged-in:
+
+
+Image preview in Modal:
+
+<a href="#" id="pop">
+    <img id="imageresource" src="image" style="width: 400px; height: 400px;">
+    Image Preview
+</a>
+
+
+<img src="" id="imagepreview" style="width: 400px; height: 400px;" > (change height and width in css)
+
+
+$("#pop").on("click", function() {
+   $('#imagepreview').attr('src', $('#image').attr('src'));
+   $('#uploadModal').modal('show');
+});
+
+Message box in Modal:
+
+<form id="fb-msg" enctype="multipart/form-data">
+	<textarea id="msg-content" class="input" rows="7" cols="20" placeholder="add a message..."></textarea>
+</form>
+

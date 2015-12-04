@@ -6,7 +6,7 @@ class UploadsController < ApplicationController
 
   def create
     # Make an object in your bucket for your upload
-    obj = S3_BUCKET.objects[SecureRandom.hex + '.png']
+    obj = S3_BUCKET.objects[SecureRandom.hex + '.jpg']
 
     # Upload the file
     obj.write(
@@ -30,5 +30,9 @@ class UploadsController < ApplicationController
 
   def index
   	@uploads = Upload.all
+  end
+
+  def destroy
+    @upload = Upload.find(params[:id])
   end
 end
