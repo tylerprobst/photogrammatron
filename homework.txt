@@ -10,10 +10,6 @@ hex bug hunt
 
 QR codes with info for animals/rocks/plants in that habitat. Sends to profile, get points for how many found, etc.
 
-s3 for rails... find it, read it. (Tyler).
-
-***research deploying to Heroku...
-
 go-fish (event driven)
 
 social?? or... Oauth as flask module. 
@@ -33,28 +29,53 @@ python on AWS
 
 photogrammatron on Heroku
 
-cahnge facebook logged in text color, style. get rid of login button unless logged-in:
+***change facebook logged in text color, style. get rid of login button unless logged-in *** if logged-in, then button shows up.
+
+****front-end framework for social-app
+
+**asset pipeline and ruby conventions.
+**underscore and backbone
+
+*** paint stays on there when you choose another file without reloading.
 
 
-Image preview in Modal:
+underscore js.com 
 
-<a href="#" id="pop">
-    <img id="imageresource" src="image" style="width: 400px; height: 400px;">
-    Image Preview
-</a>
+*** provide an API for social data, return Json instead of jinja template. 
+
+-make chess public github new repo: git clone for chess.
+
+new repo. git remote add public. git push public master.
+
+need a start button for the game goFish.
+
+GitHub Pages. (building portfolio page)
+
+pdf file for resume google docs
 
 
-<img src="" id="imagepreview" style="width: 400px; height: 400px;" > (change height and width in css)
+yourusername.github.io
+
+html file into repo. link to resume. 
+
+good descriptive README
+
+CDN to get bootstrap and jquery.
+
+goFish
+Photogrammatron
+chess
+craigslist app.
+(new front-end for social)
+
+100 resumes maybe 10 responses...
 
 
-$("#pop").on("click", function() {
-   $('#imagepreview').attr('src', $('#image').attr('src'));
-   $('#uploadModal').modal('show');
-});
+***** Bootstrap modal pop-up when click on upload to fb button... then button on modal actually posts it.
+--- input to write a message.
 
-Message box in Modal:
+truncate tables... on SQL Pro... 
 
-<form id="fb-msg" enctype="multipart/form-data">
-	<textarea id="msg-content" class="input" rows="7" cols="20" placeholder="add a message..."></textarea>
-</form>
+*** GOOD README... for everything.
 
+*** fishing pole cursor on 

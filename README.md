@@ -1,73 +1,11 @@
-Photogrammatron
+Welcome to Photogrammatron!!
 
-File/link/random upload
+This is a simple broswer-based photo editing application written in JavaScript. It utilizes Bootstrap, Canvas and HTML5.
 
-Do to pic: (features)
+Navigate to the link below.
+Upload a photo from your HD.
+Have fun editing.
+Share you edited photo to Facebook if you would like.
 
-crop
-resize
-rotate
-clone stamp (retouch)
-levels
- - RGB
- - Hue
- - Contrast
-filters (Sepia, sharpness, etc.)
-drawing
-text
-color fill
-((in layers?))
+URL: http://glacial-harbor-3799.herokuapp.com/
 
-
-UI: (user interface)
-
-zoom
-make a selection
-	-rectangular
-	-circular
-	-free hand
-	-undo/redo (just save what pixels changed?)(save layers and all changes to layers?)(save simple data to what they have done)
-	-save/download (to computer)(oauth to other applications to post to fb, twit, etc.)
-
-
-
-Simplest implementation first
-
-
-PHASE 1 MVP (Minimum Viable Product):
-
-Features:
-+ link upload (onto canvas display)
-
-+ crop
-+ save
-
-UI:
-+ rectangular selection
-
-
-PHASE 2:
-
-Features:
-+ rotate 
-
-UI:
-+ zoom and navigate around
-- circular selector 
-+ text (similar to drawing)
-
-
-PHASE 3:
-
-Features:
-- filters
-- levels
-- drawing
-- clone stamp
-
-
-PHASE 4:
-
-- fb-integration
-- undo/redo
-- login/ save to our server

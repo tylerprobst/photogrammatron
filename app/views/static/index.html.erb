@@ -5,10 +5,27 @@
             Photogrammatron
             </a>
         </div>
-        <div class="nav navbar-nav navbar-right" style="padding: 10px 10px 10px 10px">
-            <%= form_tag uploads_path, id: 'upload-form', enctype: 'multipart/form-data' do %>
-                <%= submit_tag 'Upload Photo to Facebook' %>
-            <% end %>
+        <button type="button" class="btn btn-default btn-sm nav navbar-nav navbar-right" data-toggle="modal" data-target="#fbModal" style="background-color: gray; padding: 10px 10px 10px 10px">Upload Photo to Facebook</button>
+        <div id="fbModal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" style="text-align: center">Confirm upload to Facebook</h4>
+              </div>
+              <div class="modal-body" style="text-align: center">
+                <p>Clicking below will upload your photo to Facebook</p>
+              </div>
+              <div class="modal-footer">
+                <!--<button type="button" class="btn btn-default" data-dismiss="modal">Upload</button>!-->
+                <button type="button" class="btn btn-default center-block" data-dismiss="modal" style="color: gray">
+                    <%= form_tag uploads_path, id: 'upload-form', enctype: 'multipart/form-data' do %>
+                        <%= submit_tag 'Upload Photo to Facebook' %>
+                    <% end %>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="nav navbar-nav navbar-right" style="padding: 15px 10px 10px 10px">
         <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
