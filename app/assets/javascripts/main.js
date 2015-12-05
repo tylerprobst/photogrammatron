@@ -6,7 +6,7 @@ $(document).ready(function(){
 		changes     = [],
 		addChange   = true,
 		cropped     = false,
-        fontStyle = 'Arial',
+        fontStyle   = 'Arial',
 		changeIndex,
 		clockwise,
 		counterClockwise,
@@ -22,7 +22,8 @@ $(document).ready(function(){
 	//load the image to canvas
 	$('#image-upload').on('change', imgLoad);
 
-    $('#upload-form').on('submit', function (event) {
+    $('#fb-submit').on('click', function (event) {
+        console.log('are we here?');
         var formData = new FormData(),
             blob, 
             dataUrl;
@@ -40,13 +41,14 @@ $(document).ready(function(){
             processData: false,
             success: function (response, status, XHR) {
                 var post = {
-                    message      : 'post Message', //must be competely user generated
+                    message      : $('#fb-textarea').val(), //must be competely user generated
                     access_token : accessToken,
                     url          : response.url
                 };
                 
                 FB.login(function () {
                     FB.api('/me/photos', 'post', post, function (response, post) {
+                        
                         if (!response || response.error) {
                             console.log(response.error);
                             alert('Posting error occured');
@@ -64,6 +66,10 @@ $(document).ready(function(){
             // },
             error: function () {console.log(arguments)}
         });
+    });
+
+    $("#modal-button").on('click', function() {
+        $('#image-preview').attr('src', $('#image').attr('src'));
     });
 
     $(function () {
@@ -445,6 +451,19 @@ $(document).ready(function(){
             $('#selection').remove();
         }
 	}
+
+    function dataUrltoBlob (dataUrl) {
+        var arr        = dataUrl.split(','), 
+            mime       = arr[0].match(/:(.*?);/)[1], 
+            byteString = atob(arr[1]),
+            n          = byteString.length,
+            u8Array    = new Uint8Array(n);
+
+        while (n--) {
+            u8Array[n] = byteString.charCodeAt(n);
+        }
+        return new Blob([u8Array], {type:mime});
+    }
 
 	function grayscale () {
 		var imgData = context.getImageData(0, 0, canvas.width, canvas.height),

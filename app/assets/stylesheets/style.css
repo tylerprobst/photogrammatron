@@ -76,6 +76,12 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
     display: block;
 }
 
+#modal-button {
+    background-color: gray; 
+    padding: 10px 10px 10px 10px;
+    box-shadow: 0 0 0 0;
+}
+
 .collapse {
     border: 1px solid black;
     border-radius: 20px;
@@ -84,4 +90,13 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
 
 input {
     border-radius: 20px;
+}
+
+#status {
+    color: gray;
+}
+
+#image-preview {
+    max-height: 100px;
+    
 }

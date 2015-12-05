@@ -1,0 +1,81 @@
+
+
+Kids geocahing:
+
+hot wheel hunting
+
+bot hunting
+
+hex bug hunt
+
+QR codes with info for animals/rocks/plants in that habitat. Sends to profile, get points for how many found, etc.
+
+go-fish (event driven)
+
+social?? or... Oauth as flask module. 
+
+craigslist site
+
+chess
+
+individual final project... should include API integration.
+
+MVP for WeDopt more DB work... Flask or Rails.
+
+front-end framework... Backbone... pretty up social ??
+
+
+python on AWS
+
+photogrammatron on Heroku
+
+***change facebook logged in text color, style. get rid of login button unless logged-in *** if logged-in, then button shows up.
+
+****front-end framework for social-app
+
+**asset pipeline and ruby conventions.
+**underscore and backbone
+
+*** paint stays on there when you choose another file without reloading.
+
+
+underscore js.com 
+
+*** provide an API for social data, return Json instead of jinja template. 
+
+-make chess public github new repo: git clone for chess.
+
+new repo. git remote add public. git push public master.
+
+need a start button for the game goFish.
+
+GitHub Pages. (building portfolio page)
+
+pdf file for resume google docs
+
+
+yourusername.github.io
+
+html file into repo. link to resume. 
+
+good descriptive README
+
+CDN to get bootstrap and jquery.
+
+goFish
+Photogrammatron
+chess
+craigslist app.
+(new front-end for social)
+
+100 resumes maybe 10 responses...
+
+
+***** Bootstrap modal pop-up when click on upload to fb button... then button on modal actually posts it.
+--- input to write a message.
+
+truncate tables... on SQL Pro... 
+
+*** GOOD README... for everything.
+
+*** fishing pole cursor on 
