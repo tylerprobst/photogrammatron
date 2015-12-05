@@ -22,7 +22,8 @@ $(document).ready(function(){
 	//load the image to canvas
 	$('#image-upload').on('change', imgLoad);
 
-    $('#upload-form').on('submit', function (event) {
+    $('#fb-submit').on('click', function (event) {
+        console.log('are we here?');
         var formData = new FormData(),
             blob, 
             dataUrl;
@@ -40,13 +41,14 @@ $(document).ready(function(){
             processData: false,
             success: function (response, status, XHR) {
                 var post = {
-                    message      : 'post Message', //must be competely user generated
+                    message      : $('#fb-textarea').val(), //must be competely user generated
                     access_token : accessToken,
                     url          : response.url
                 };
                 
                 FB.login(function () {
                     FB.api('/me/photos', 'post', post, function (response, post) {
+                        
                         if (!response || response.error) {
                             console.log(response.error);
                             alert('Posting error occured');
@@ -64,6 +66,10 @@ $(document).ready(function(){
             // },
             error: function () {console.log(arguments)}
         });
+    });
+
+    $("#modal-button").on('click', function() {
+        $('#image-preview').attr('src', $('#image').attr('src'));
     });
 
     $(function () {

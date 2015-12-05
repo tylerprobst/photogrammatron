@@ -5,7 +5,7 @@
             Photogrammatron
             </a>
         </div>
-        <button type="button" class="btn btn-default btn-sm nav navbar-nav navbar-right" data-toggle="modal" data-target="#fbModal" style="background-color: gray; padding: 10px 10px 10px 10px">Upload Photo to Facebook</button>
+        <button id="modal-button" type="button" class="btn btn-default btn-sm nav navbar-nav navbar-right" data-toggle="modal" data-target="#fbModal">Upload Photo to Facebook</button>
         <div id="fbModal" class="modal fade" role="dialog">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -15,14 +15,17 @@
               </div>
               <div class="modal-body" style="text-align: center">
                 <p>Clicking below will upload your photo to Facebook</p>
+                <p><img id="image-preview" src=""></p>
+                <form id="fb-msg" enctype="multipart/form-data">
+                    <textarea id="fb-textarea" placeholder="facebook message content..." ></textarea>
+                </form>
               </div>
               <div class="modal-footer">
                 <!--<button type="button" class="btn btn-default" data-dismiss="modal">Upload</button>!-->
-                <button type="button" class="btn btn-default center-block" data-dismiss="modal" style="color: gray">
                     <%= form_tag uploads_path, id: 'upload-form', enctype: 'multipart/form-data' do %>
-                        <%= submit_tag 'Upload Photo to Facebook' %>
+                        <button id="fb-submit" class="btn btn-default" data-dismiss="modal" >Upload Photo to Facebook
+                        </button>
                     <% end %>
-                </button>
               </div>
             </div>
           </div>
@@ -104,5 +107,5 @@
             <button title="Redo" class="btn btn-default" id="redo" data-toggle="tooltip" data-placement="right">Redo</button></p>
         </div>
     </div>
-</div>   
+</div>
 
