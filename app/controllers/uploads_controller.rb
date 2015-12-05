@@ -8,17 +8,20 @@ class UploadsController < ApplicationController
     # Make an object in your bucket for your upload
     obj = S3_BUCKET.objects[SecureRandom.hex + '.jpg']
 
+    puts 'before upload'
     # Upload the file
     obj.write(
       file: params[:file],
       acl: :public_read
     )
+    puts 'after upload'
 
     # Create an object for the upload
     @upload = Upload.new(
         url: obj.public_url,
         name: obj.key
         )
+    puts 'upload model created'
 
     # Save the upload
     if @upload.save
