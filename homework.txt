@@ -12,7 +12,6 @@ QR codes with info for animals/rocks/plants in that habitat. Sends to profile, g
 
 go-fish (event driven)
 
-social?? or... Oauth as flask module. 
 
 craigslist site
 
@@ -29,7 +28,6 @@ python on AWS
 
 photogrammatron on Heroku
 
-***change facebook logged in text color, style. get rid of login button unless logged-in *** if logged-in, then button shows up.
 
 ****front-end framework for social-app
 

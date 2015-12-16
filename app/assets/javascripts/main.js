@@ -23,7 +23,6 @@ $(document).ready(function(){
 	$('#image-upload').on('change', imgLoad);
 
     $('#fb-submit').on('click', function (event) {
-        console.log('are we here?');
         var formData = new FormData(),
             blob, 
             dataUrl;
@@ -713,7 +712,7 @@ $(document).ready(function(){
             $applyBright   = $('#apply-bright'),
             $applyContrast = $('#apply-contrast');
 
-		if (this.val() === 'OFF' || this.hasClass('btn-default')) {
+		if (this.val() === 'OFF') {
 
 			$rectSelect.val('OFF');
 			$rectSelect.removeClass('btn-success').addClass('btn-danger');
@@ -762,8 +761,9 @@ $(document).ready(function(){
 
             $applyContrast.val('OFF');
 
+            this.val('ON');
+
             if (!this.hasClass('btn-default')) {
-                this.val('ON');
                 this.removeClass('btn-danger').addClass('btn-success');
             }
         }
@@ -776,3 +776,4 @@ $(document).ready(function(){
 });
 
 
+ 
