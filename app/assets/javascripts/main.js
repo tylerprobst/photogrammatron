@@ -23,7 +23,6 @@ $(document).ready(function(){
 	$('#image-upload').on('change', imgLoad);
 
     $('#fb-submit').on('click', function (event) {
-        console.log('are we here?');
         var formData = new FormData(),
             blob, 
             dataUrl;

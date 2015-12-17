@@ -19,6 +19,7 @@ class UploadsController < ApplicationController
         url: obj.public_url,
         name: obj.key
         )
+    puts 'upload model created'
 
     # Save the upload
     if @upload.save
