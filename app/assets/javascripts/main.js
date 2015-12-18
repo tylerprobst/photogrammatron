@@ -76,7 +76,7 @@ $(document).ready(function(){
     });
 
     //rectangular selector
-	$('#rectangular-selector').on('click', function (event) {    
+	$('.rectangular-selector').on('click', function (event) {    
 		var $this = $(this);
 		$this.buttonController();
 
