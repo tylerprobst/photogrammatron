@@ -153,7 +153,7 @@ $(document).ready(function(){
 
     // zoom-out
 	$('#zoom-out').on('click', function (event) {
-		var $this = $(this);
+		var $this = $(this);    
 		$this.buttonController();
 
 		if ($this.val() === 'ON') {
@@ -694,7 +694,7 @@ $(document).ready(function(){
 
     // turns buttons on/off
 	$.fn.buttonController = function () {
-        var $rectSelect    = $('#rectangular-selector'),
+        var $rectSelect    = $('.rectangular-selector'),
 			$zoomIn        = $('#zoom-in'),
 			$zoomOut       = $('#zoom-out'),
 			$nav           = $('#nav'),
@@ -715,23 +715,23 @@ $(document).ready(function(){
 		if (this.val() === 'OFF') {
 
 			$rectSelect.val('OFF');
-			$rectSelect.removeClass('btn-success').addClass('btn-danger');
+			$rectSelect.removeClass('btn-active').addClass('btn-danger');
 			$('#image-wrapper').off('mousedown');
 
 			$zoomIn.val('OFF');
-			$zoomIn.removeClass('btn-success').addClass('btn-danger');
+			$zoomIn.removeClass('btn-active').addClass('btn-danger');
 			$('#image').off('click');
 
 			$zoomOut.val('OFF');
-			$zoomOut.removeClass('btn-success').addClass('btn-danger');
+			$zoomOut.removeClass('btn-active').addClass('btn-danger');
 			$('#image').off('click');
 
 			$nav.val('OFF');
-			$nav.removeClass('btn-success').addClass('btn-danger');
+			$nav.removeClass('btn-active').addClass('btn-danger');
 			$('#image-wrapper').off('mousedown');
 
             $paint.val('OFF');
-            $paint.removeClass('btn-success').addClass('btn-danger');
+            $paint.removeClass('btn-active').addClass('btn-danger');
             $('#image').off('click');
             $('#paint-layer').off('mousedown');
             $('#paint-layer').off('mousemove');
@@ -743,13 +743,13 @@ $(document).ready(function(){
 
             $crop.val('OFF');
 
-            $undo.val('OFF');
+            // $undo.val('OFF');
 
-            $redo.val('OFF');
+            // $redo.val('OFF');
 
-            $grayscale.val('OFF');
+            // $grayscale.val('OFF');
 
-            $sepia.val('OFF');
+            // $sepia.val('OFF');
 
             $text.val('OFF');
 
@@ -764,12 +764,12 @@ $(document).ready(function(){
             this.val('ON');
 
             if (!this.hasClass('btn-default')) {
-                this.removeClass('btn-danger').addClass('btn-success');
+                this.removeClass('btn-danger').addClass('btn-active');
             }
         }
 		else {
 			this.val('OFF');
-			this.removeClass('btn-success').addClass('btn-danger');
+			this.removeClass('btn-active').addClass('btn-danger');
             $('#paint-layer').remove();
 		}
 	}

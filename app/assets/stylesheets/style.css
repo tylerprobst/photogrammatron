@@ -40,8 +40,8 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
 }
 
 .btn {
-    background: #800000;
-    color: white;
+    background: #800000;  
+    color: white;          
     border: none;
     border-radius: 24px;
     box-shadow: 0 3px 0 0;
@@ -49,11 +49,15 @@ html, body, .container-fluid, #photogrammatron, #photogrammatron > div {
 }
 .btn:hover, .btn:focus {
   background: #8FBC8F;
-  color: black;
+  color: white;
 }
 .btn:active {
   background: #8FBC8F;
   color: black;
+}
+.btn-active {
+  background: #8FBC8F;
+  color: black  
 }
 
 .btn-file {
