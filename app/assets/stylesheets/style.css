@@ -96,6 +96,10 @@ input {
     border-radius: 20px;
 }
 
+.selection {
+    z-index: 100; 
+}
+
 #status {
     color: gray;
 }

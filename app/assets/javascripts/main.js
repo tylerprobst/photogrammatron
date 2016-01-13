@@ -57,12 +57,6 @@ $(document).ready(function(){
                         }
                 })}, {scope : 'publish_actions' });
             },    
-            //     FB.ui({
-            //         method : 'feed',
-            //         link   : response.url,
-            //         picture: URLToPicture(),
-            //     }, function(response){});
-            // },
             error: function () {console.log(arguments)}
         });
     });
@@ -75,7 +69,6 @@ $(document).ready(function(){
         $('[data-toggle="tooltip"]').tooltip();
     });
 
-    //rectangular selector
 	$('.rectangular-selector').on('click', function (event) {    
 		var $this = $(this);
 		$this.buttonController();
@@ -325,6 +318,7 @@ $(document).ready(function(){
                 reDraw(coords, context, imgScale);
                 coords = [];
                 img.src = canvas.toDataURL();
+                $(window).off('mousemove mouseup');
             });
         }
     });
@@ -740,16 +734,6 @@ $(document).ready(function(){
             $rotateClock.val('OFF');
 
             $rotateCounter.val('OFF');
-
-            $crop.val('OFF');
-
-            // $undo.val('OFF');
-
-            // $redo.val('OFF');
-
-            // $grayscale.val('OFF');
-
-            // $sepia.val('OFF');
 
             $text.val('OFF');
 
