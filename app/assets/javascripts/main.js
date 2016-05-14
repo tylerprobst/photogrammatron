@@ -310,16 +310,17 @@ $(document).ready(function(){
                         reDraw(coords, paintContext);
                     }
                 });
+            
+                $(window).on('mouseup', function (event) {
+                    paint = false;
+                    reDraw(coords, context, imgScale);
+                    coords = [];
+                    img.src = canvas.toDataURL();
+                    $(window).off('mousemove mouseup');
+                });
             });
 
-            $(window).on('mouseup', function (event) {
-
-                paint = false;
-                reDraw(coords, context, imgScale);
-                coords = [];
-                img.src = canvas.toDataURL();
-                $(window).off('mousemove mouseup');
-            });
+            
         }
     });
 
